@@ -1,0 +1,38 @@
+# Object files
+*.o
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# work dir
+work/*
+
+# backup
+*~
+*.bak
+
+#sim
+*_tb
+
+#project
+
+proj/*
+lib/*
+managed_ip_project/*
+.Xil
+
+*.yy.c
+*.tab.h
+*.tab.c
