@@ -36,7 +36,7 @@ NC	{ return(NC_TOKEN); }
 JUMP	{ return(JUMP_TOKEN); }
 CALL	{ return(CALL_TOKEN); }
 RETURN	{ return(RETURN_TOKEN); }
-s[0-9A-Z]	{ yylval = ctox(yytext+1); return(REG); }
+s[0-1][0-9A-Z]	{ yylval = ctox(yytext+1)*16+ctox(yytext+2); return(REG); }
 \:	{ return(LABEL_END); }
 \,	{ return(COMMA); }
 [0-9A-F][0-9A-F]	{ yylval = (long)strdup(yytext); return(DIRECT); }

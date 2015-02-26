@@ -22,4 +22,6 @@ test:test.psm
 test.psm:test.c
 	$(CC) test.c > test.psm
 
-		
+install:zas
+	cp zas.exe ../../bin/zas.exe
+	

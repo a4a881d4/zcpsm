@@ -74,10 +74,12 @@ secondarg: REG {isDirect=0;arg2=$1;}
 twoarg: twoAop REG COMMA secondarg 
 	{	arg1=$2;
 		ins|=(arg1&0xf)<<8;
+		ins|=((arg1&0x10)>>4)<<17;
 		if( !isDirect )
 		{
 			ins|=twoArgOp&0x7;
 			ins|=(arg2&0xf)<<4;
+			ins|=((arg2&0x10)>>4)<<16;
 			ins|=0xc000;
 			
 		}
@@ -104,6 +106,7 @@ shift: shiftop REG
 		arg1=$2;
 		ins|=0xd000;
 		ins|=(arg1&0xf)<<8;
+		ins|=((arg1&0x10)>>4)<<17;
 		ins|=(shiftOp&0xf);
 	}
 	;
@@ -111,6 +114,7 @@ inout: INPUT_TOKEN REG COMMA secondarg
 	{
 		arg1=$2;
 		ins|=(arg1&0xf)<<8;
+		ins|=((arg1&0x10)>>4)<<17;
 		if( isDirect )
 		{
 			ins|=(arg2&0xff);
@@ -120,6 +124,7 @@ inout: INPUT_TOKEN REG COMMA secondarg
 		else
 		{
 			ins|=(arg2&0xf)<<4;
+			ins|=((arg2&0x10)>>4)<<16;
 			opGrp=0xb;
 			ins|=0xb000;
 		}
@@ -129,6 +134,7 @@ inout: INPUT_TOKEN REG COMMA secondarg
 	{
 		arg1=$2;
 		ins|=(arg1&0xf)<<8;
+		ins|=((arg1&0x10)>>4)<<17;
 		if( isDirect )
 		{
 			ins|=(arg2&0xff);
@@ -138,6 +144,7 @@ inout: INPUT_TOKEN REG COMMA secondarg
 		else
 		{
 			ins|=(arg2&0xf)<<4;
+			ins|=((arg2&0x10)>>4)<<16;
 			opGrp=0xf;
 			ins|=0xf000;
 		}

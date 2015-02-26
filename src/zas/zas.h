@@ -18,7 +18,7 @@ typedef struct strulabel {
 } label_t;
 
 typedef struct strulabelBuf {
-	label_t label[256];
+	label_t label[4096];
 	int length;
 } label_buf;
 

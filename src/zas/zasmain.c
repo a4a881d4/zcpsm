@@ -12,8 +12,8 @@ int opGrp;
 int jumpGrp;
 int jumpFlag;
 int arg1,arg2;
-int code[1024];
-int srcline[1024];
+int code[4096];
+int srcline[4096];
 int ins;
 
 label_buf memlabel;
@@ -24,6 +24,8 @@ extern FILE *yyin;
 int lineno;
 char initstr[4][16][65];
 void genLog( char *psmFile );
+char strBitString[256];
+char *genBitString(int x,int l);
 
 processLabel()
 {
@@ -44,7 +46,8 @@ processLabel()
 		{
 			if( strcmp(needlabel.label[i].name,memlabel.label[j].name)==0 )
 			{
-				code[needlabel.label[i].pos]|=memlabel.label[j].pos;
+				code[needlabel.label[i].pos] |= memlabel.label[j].pos&0x3ff;
+				code[needlabel.label[i].pos] |= ((memlabel.label[j].pos&0xc00)>>10)<<16;
 			}
 		}
 	}
@@ -67,23 +70,25 @@ void genVhdlRom(char *romName)
 	fprintf(fp,"use IEEE.STD_LOGIC_1164.ALL;\n");
 	fprintf(fp,"ENTITY %s IS\n",romName);
 	fprintf(fp,"\tport (");
-	fprintf(fp,"\t\taddrb: IN std_logic_VECTOR(9 downto 0);\n");
+	fprintf(fp,"\t\taddrb: IN std_logic_VECTOR(11 downto 0);\n");
 	fprintf(fp,"\t\tclkb: IN std_logic;\n");
-	fprintf(fp,"\t\tdob: OUT std_logic_VECTOR(15 downto 0)	:= (others => '0')\n");
+	fprintf(fp,"\t\tdob: OUT std_logic_VECTOR(17 downto 0)	:= (others => '0')\n");
 	fprintf(fp,"\t);\n");
 	fprintf(fp,"end %s;\n",romName);
 
 	fprintf(fp,"architecture behavior of %s is\n",romName);
 	fprintf(fp,"signal addr : std_logic_vector(11 downto 0):=(others=>'0');\n");
 	fprintf(fp,"begin\n");
-	fprintf(fp,"\taddr<=\"00\"&addrb;\n");
+	fprintf(fp,"\taddr<=addrb;\n");
 	fprintf(fp,"process(clkb)\n");
 	fprintf(fp,"begin\n");
 	fprintf(fp,"\tif clkb'event and clkb='1' then\n");
 	fprintf(fp,"\t\tcase addr is\n");
-	for( i=0;i<codeline;i++ )
-		fprintf(fp,"\t\t\twhen X\"%03X\" => dob<=X\"%04X\";\n",i,code[i]);
-	fprintf(fp,"\t\t\twhen others => dob<=X\"0000\";\n");
+	for( i=0;i<codeline;i++ ) {
+		fprintf(fp,"\t\t\twhen \"%s\" => ",genBitString(i,12));
+		fprintf(fp,"dob<=\"%s\";\n",genBitString(code[i],18));
+	}
+	fprintf(fp,"\t\t\twhen others => dob<=\"%s\";\n",genBitString(0,18));
 	fprintf(fp,"\t\tend case;\n");
 	fprintf(fp,"\tend if;\n");
 	fprintf(fp,"end process;\n");
@@ -210,13 +215,13 @@ void genVhdlRam(char *name, int RamNum )
 	fprintf(fp,"use unisim.vcomponents.all;\n");
 	fprintf(fp,"entity %s is\n",name);
 	fprintf(fp,"    Port (\n");      
-	fprintf(fp,"			addra: IN std_logic_VECTOR(9 downto 0);\n");
-	fprintf(fp,"			addrb: IN std_logic_VECTOR(9 downto 0);\n");
+	fprintf(fp,"			addra: IN std_logic_VECTOR(11 downto 0);\n");
+	fprintf(fp,"			addrb: IN std_logic_VECTOR(11 downto 0);\n");
 	fprintf(fp,"			clka: IN std_logic;\n");
 	fprintf(fp,"			clkb: IN std_logic;\n");
-	fprintf(fp,"			dina: IN std_logic_VECTOR(15 downto 0);\n");
-	fprintf(fp,"			douta: OUT std_logic_VECTOR(15 downto 0);\n");
-	fprintf(fp,"			doutb: OUT std_logic_VECTOR(15 downto 0);\n");
+	fprintf(fp,"			dina: IN std_logic_VECTOR(18 downto 0);\n");
+	fprintf(fp,"			douta: OUT std_logic_VECTOR(18 downto 0);\n");
+	fprintf(fp,"			doutb: OUT std_logic_VECTOR(18 downto 0);\n");
 	fprintf(fp,"			wea: IN std_logic);\n");
 	fprintf(fp,"end %s;\n",name);
 	fprintf(fp,"architecture low_level_definition of %s is\n",name);
@@ -253,6 +258,7 @@ main(int argc, char *argv[])
 	close(yyin);
 	processLabel();
 	strcpy(fn,argv[1]);
+/*	
 	strcat(fn,".vhd");
 	fp=fopen(fn,"wt");
 	if( codeline<256 )
@@ -262,6 +268,7 @@ main(int argc, char *argv[])
 	else
 		genVhdlRam(argv[1],4);
 	fclose(fp);
+*/
 	strcpy(fn,argv[1]);
 	strcat(fn,"_romonly.vhd");
 	fp=fopen(fn,"wt");
@@ -278,7 +285,7 @@ main(int argc, char *argv[])
 	strcat(fn,".hex");
 	fp=fopen(fn,"wt");
 	for( i=0;i<codeline;i++ )
-		fprintf(fp,"%04X \n",code[i]);
+		fprintf(fp,"%05X \n",code[i]);
 	fclose(fp);
 	
 	
@@ -311,7 +318,7 @@ void genLog( char *psmFile )
 			fprintf(fp,"          %s\n",strLine);
 		}
 		fprintf(fp,"%04X  ",i);
-		fprintf(fp,"%04X  ",code[i]);
+		fprintf(fp,"%05X  ",code[i]);
 		getLine(psm,strLine);
 		fprintf(fp,"    %s\n",strLine);
 		line++;
@@ -356,4 +363,17 @@ int atox(char *p)
 	a|=ctox(p+1);
 	return a&0xff;
 }
+
+char *genBitString(int x,int l)
+{
+	int i;
+	strBitString[0]='z';
+	for(i=0;i<l;i++)
+	{
+		strBitString[i]='0'+((x>>(l-1-i))&1);
+	}
+	strBitString[l]='\0';
+	return strBitString;
+}
+
 
