@@ -59,5 +59,9 @@ clean :
 	rm -f *.o; rm -f *~; rm -f cc86-cc1.exe; rm -f *.bak;
 
 backup :
+
+install: cc86-cc1
+	cp cc86-cc1.exe ../../bin/zcc.exe
+	
     
 

@@ -50,7 +50,9 @@ FORWARD void rdeclarator P((void));
 FORWARD bool_pt regdecl P((void));
 
 PUBLIC offset_t autoVarPos;		/* auto Number */
-PUBLIC offset_t globalVarPos=16;		/* global Number */
+/* change to 32 */
+/* a4a881d4 2015/2/26 */
+PUBLIC offset_t globalVarPos=32;		/* global Number */
 
 
 PRIVATE struct typestruct *chainprefix(pretype, sufftype)

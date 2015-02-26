@@ -93,7 +93,7 @@
 
 #define ALLDATREGS (BREG|DREG)
 #define CHARREGS BREG
-#define MAXREGS 16		/* number of data registers */
+#define MAXREGS 32		/* number of data registers */
 #define WORKDATREGS (BREG|DREG)
 
 /* function call and return registers */

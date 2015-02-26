@@ -29,18 +29,18 @@ struct symstruct *target;
     {
 	if( source->storage == CONSTANT && target->type->typesize==1)
 	{
-		printf("ADD\ts%1X,\t%02X\n",target->offset.offi, source->offset.offv&0xff); 
+		printf("ADD\ts%02X,\t%02X\n",target->offset.offi, source->offset.offv&0xff); 
 		return;
 	}
 	if( source->storage == CONSTANT && target->type->typesize==2 )
 	{
-		printf("ADD\ts%1X,\t%02X\n",target->offset.offi, source->offset.offv&0xff);
-		printf("ADDCY\ts%1X,\t%02X\n",target->offset.offi+1, (source->offset.offv>>8)&0xff);
+		printf("ADD\ts%02X,\t%02X\n",target->offset.offi, source->offset.offv&0xff);
+		printf("ADDCY\ts%02X,\t%02X\n",target->offset.offi+1, (source->offset.offv>>8)&0xff);
 		return;
 	}
 	if( source->storage == LOCAL && target->type->typesize==1)
 	{
-		printf("ADD\ts%1X,\ts%1X\n",target->offset.offi, source->offset.offi); 
+		printf("ADD\ts%02X,\ts%02X\n",target->offset.offi, source->offset.offi); 
 		
 		return;
 	}
@@ -48,13 +48,13 @@ struct symstruct *target;
 	{
 		if( source->type->typesize==2 )
 		{
-			printf("ADD\ts%1X,\ts%1X\n",target->offset.offi, source->offset.offi); 
-			printf("ADDCY\ts%1X,\ts%1X\n",target->offset.offi+1, source->offset.offi+1); 
+			printf("ADD\ts%02X,\ts%02X\n",target->offset.offi, source->offset.offi); 
+			printf("ADDCY\ts%02X,\ts%02X\n",target->offset.offi+1, source->offset.offi+1); 
 		}
 		if( source->type->typesize==1 )
 		{
-			printf("ADD\ts%1X,\ts%1X\n",target->offset.offi, source->offset.offi); 
-			printf("ADDCY\ts%1X,\t00\n",target->offset.offi+1); 
+			printf("ADD\ts%02X,\ts%02X\n",target->offset.offi, source->offset.offi); 
+			printf("ADDCY\ts%02X,\t00\n",target->offset.offi+1); 
 		}
 		
 		return;
@@ -72,18 +72,18 @@ char *opstr;
     {
 	if( source->storage == CONSTANT && target->type->typesize==1)
 	{
-		printf("%s\ts%1X,\t%02X\n",opstr,target->offset.offi, source->offset.offv&0xff); 
+		printf("%s\ts%02X,\t%02X\n",opstr,target->offset.offi, source->offset.offv&0xff); 
 		return;
 	}
 	if( source->storage == CONSTANT && target->type->typesize==2 )
 	{
-		printf("%s\ts%1X,\t%02X\n",opstr,target->offset.offi, source->offset.offv&0xff);
-		printf("%s\ts%1X,\t%02X\n",opstr,target->offset.offi+1, (source->offset.offv>>8)&0xff);
+		printf("%s\ts%02X,\t%02X\n",opstr,target->offset.offi, source->offset.offv&0xff);
+		printf("%s\ts%02X,\t%02X\n",opstr,target->offset.offi+1, (source->offset.offv>>8)&0xff);
 		return;
 	}
 	if( source->storage == LOCAL && target->type->typesize==1)
 	{
-		printf("%s\ts%1X,\ts%1X\n",opstr,target->offset.offi, source->offset.offi); 
+		printf("%s\ts%02X,\ts%02X\n",opstr,target->offset.offi, source->offset.offi); 
 		
 		return;
 	}
@@ -91,13 +91,13 @@ char *opstr;
 	{
 		if( source->type->typesize==2 )
 		{
-			printf("%s\ts%1X,\ts%1X\n",opstr,target->offset.offi, source->offset.offi); 
-			printf("%s\ts%1X,\ts%1X\n",opstr,target->offset.offi+1, source->offset.offi+1); 
+			printf("%s\ts%02X,\ts%02X\n",opstr,target->offset.offi, source->offset.offi); 
+			printf("%s\ts%02X,\ts%02X\n",opstr,target->offset.offi+1, source->offset.offi+1); 
 		}
 		if( source->type->typesize==1 )
 		{
-			printf("%s\ts%1X,\ts%1X\n",opstr,target->offset.offi, source->offset.offi); 
-			printf("%s\ts%1X,\t00\n",opstr,target->offset.offi+1); 
+			printf("%s\ts%02X,\ts%02X\n",opstr,target->offset.offi, source->offset.offi); 
+			printf("%s\ts%02X,\t00\n",opstr,target->offset.offi+1); 
 		}
 		
 		return;
@@ -116,15 +116,15 @@ char *opstr;
 	{
 		if( target->type->typesize==1 )
 		{
-			printf("LOAD\ts0,\ts%1X\n",target->offset.offi);
-			printf("%s\ts0,\t%02X\n",opstr,source->offset.offv&0xff);
+			printf("LOAD\ts00,\ts%02X\n",target->offset.offi);
+			printf("%s\ts00,\t%02X\n",opstr,source->offset.offv&0xff);
 		}
 		if( target->type->typesize==2 )
 		{
-			printf("LOAD\ts0,\ts%1X\n",target->offset.offi);
-			printf("LOAD\ts1,\ts%1X\n",target->offset.offi+1);
-			printf("%s\ts0,\t%02X\n",opstr,source->offset.offv&0xff);
-			printf("%s\ts1,\t%02X\n",opstr,(source->offset.offv>>8)&0xff);
+			printf("LOAD\ts00,\ts%02X\n",target->offset.offi);
+			printf("LOAD\ts01,\ts%02X\n",target->offset.offi+1);
+			printf("%s\ts00,\t%02X\n",opstr,source->offset.offv&0xff);
+			printf("%s\ts01,\t%02X\n",opstr,(source->offset.offv>>8)&0xff);
 		}
 	}
 	if( target->type->typesize==1 )
@@ -142,15 +142,15 @@ char *opstr;
 		{
 			if( target->type->typesize==1 )
 			{
-				printf("LOAD\ts0,\ts%1X\n",target->offset.offi);
-				printf("%s\ts0,\ts%1X\n",opstr,source->offset.offi); 
+				printf("LOAD\ts00,\ts%02X\n",target->offset.offi);
+				printf("%s\ts00,\ts%02X\n",opstr,source->offset.offi); 
 			}
 			if( target->type->typesize==2 )
 			{
-				printf("LOAD\ts0,\ts%1X\n",target->offset.offi);
-				printf("LOAD\ts1,\ts%1X\n",target->offset.offi+1);
-				printf("%s\ts0,\ts%1X\n",opstr,source->offset.offi);
-				printf("%s\ts1,\ts%1X\n",opstr,source->offset.offi+1);
+				printf("LOAD\ts00,\ts%02X\n",target->offset.offi);
+				printf("LOAD\ts01,\ts%02X\n",target->offset.offi+1);
+				printf("%s\ts00,\ts%02X\n",opstr,source->offset.offi);
+				printf("%s\ts01,\ts%02X\n",opstr,source->offset.offi+1);
 			}
 
 			if( target->type->typesize==1 )
@@ -162,19 +162,19 @@ char *opstr;
     }
     
 	if( target->storage==DREG8 && source->storage==LOCAL )
-		printf("%s\ts0,\ts%1X\n",opstr,source->offset.offi); 
+		printf("%s\ts00,\ts%02X\n",opstr,source->offset.offi); 
 	if( target->storage==DREG16 && source->storage==LOCAL )
 	{
-		printf("%s\ts0,\ts%1X\n",opstr,source->offset.offi); 
-		printf("%s\ts1,\ts%1X\n",opstr,source->offset.offi+1);
+		printf("%s\ts00,\ts%02X\n",opstr,source->offset.offi); 
+		printf("%s\ts01,\ts%02X\n",opstr,source->offset.offi+1);
 	}
 	
 	if( target->storage==DREG8 && source->storage==CONSTANT )
-		printf("%s\ts0,\t%02X\n",opstr,source->offset.offv&0xff); 
+		printf("%s\ts00,\t%02X\n",opstr,source->offset.offv&0xff); 
 	if( target->storage==DREG16 && source->storage==LOCAL )
 	{
-		printf("%s\ts0,\t%02X\n",opstr,source->offset.offv&0xff); 
-		printf("%s\ts1,\t%02X\n",opstr,(source->offset.offv>>8)&0xff);
+		printf("%s\ts00,\t%02X\n",opstr,source->offset.offv&0xff); 
+		printf("%s\ts01,\t%02X\n",opstr,(source->offset.offv>>8)&0xff);
 	}
 	
 	return;
@@ -215,18 +215,18 @@ struct symstruct *target;
     {
 	if( source->storage == CONSTANT && target->type->typesize==1)
 	{
-		printf("SUB\ts%1X,\t%02X\n",target->offset.offi, source->offset.offv&0xff); 
+		printf("SUB\ts%02X,\t%02X\n",target->offset.offi, source->offset.offv&0xff); 
 		return;
 	}
 	if( source->storage == CONSTANT && target->type->typesize==2 )
 	{
-		printf("SUB\ts%1X,\t%02X\n",target->offset.offi, source->offset.offv&0xff);
-		printf("SUBCY\ts%1X,\t%02X\n",target->offset.offi+1, (source->offset.offv>>8)&0xff);
+		printf("SUB\ts%02X,\t%02X\n",target->offset.offi, source->offset.offv&0xff);
+		printf("SUBCY\ts%02X,\t%02X\n",target->offset.offi+1, (source->offset.offv>>8)&0xff);
 		return;
 	}
 	if( source->storage == LOCAL && target->type->typesize==1)
 	{
-		printf("SUB\ts%1X,\ts%1X\n",target->offset.offi, source->offset.offi); 
+		printf("SUB\ts%02X,\ts%02X\n",target->offset.offi, source->offset.offi); 
 		
 		return;
 	}
@@ -234,13 +234,13 @@ struct symstruct *target;
 	{
 		if( source->type->typesize==2 )
 		{
-			printf("SUB\ts%1X,\ts%1X\n",target->offset.offi, source->offset.offi); 
-			printf("SUBCY\ts%1X,\ts%1X\n",target->offset.offi+1, source->offset.offi+1); 
+			printf("SUB\ts%02X,\ts%02X\n",target->offset.offi, source->offset.offi); 
+			printf("SUBCY\ts%02X,\ts%02X\n",target->offset.offi+1, source->offset.offi+1); 
 		}
 		if( source->type->typesize==1 )
 		{
-			printf("SUB\ts%1X,\ts%1X\n",target->offset.offi, source->offset.offi); 
-			printf("SUBCY\ts%1X,\t00\n",target->offset.offi+1); 
+			printf("SUB\ts%02X,\ts%02X\n",target->offset.offi, source->offset.offi); 
+			printf("SUBCY\ts%02X,\t00\n",target->offset.offi+1); 
 		}
 		return;
 	}
@@ -257,12 +257,12 @@ struct symstruct *target;
 	{
 		if( target->type->typesize==1 )
 		{
-			printf("LOAD\ts0,\ts%1X\n",target->offset.offi);
+			printf("LOAD\ts00,\ts%02X\n",target->offset.offi);
 		}
 		if( target->type->typesize==2 )
 		{
-			printf("LOAD\ts0,\ts%1X\n",target->offset.offi);
-			printf("LOAD\ts1,\ts%1X\n",target->offset.offi+1);
+			printf("LOAD\ts00,\ts%02X\n",target->offset.offi);
+			printf("LOAD\ts01,\ts%02X\n",target->offset.offi+1);
 		}
 	}
 	if( target->type->typesize==1 )
@@ -280,15 +280,15 @@ struct symstruct *target;
 		{
 			if( target->type->typesize==1 )
 			{
-				printf("LOAD\ts0,\ts%1X\n",target->offset.offi);
-				printf("ADD\ts0,\ts%1X\n",source->offset.offi); 
+				printf("LOAD\ts00,\ts%02X\n",target->offset.offi);
+				printf("ADD\ts00,\ts%02X\n",source->offset.offi); 
 			}
 			if( target->type->typesize==2 )
 			{
-				printf("LOAD\ts0,\ts%1X\n",target->offset.offi);
-				printf("LOAD\ts1,\ts%1X\n",target->offset.offi+1);
-				printf("ADD\ts0,\ts%1X\n",source->offset.offi);
-				printf("ADDCY\ts1,\ts%1X\n",source->offset.offi+1);
+				printf("LOAD\ts00,\ts%02X\n",target->offset.offi);
+				printf("LOAD\ts01,\ts%02X\n",target->offset.offi+1);
+				printf("ADD\ts00,\ts%02X\n",source->offset.offi);
+				printf("ADDCY\ts01,\ts%02X\n",source->offset.offi+1);
 			}
 
 			if( target->type->typesize==1 )
@@ -301,19 +301,19 @@ struct symstruct *target;
 	
     }	
 	if( target->storage==DREG8 && source->storage==LOCAL )
-		printf("ADD\ts0,\ts%1X\n",source->offset.offi); 
+		printf("ADD\ts00,\ts%02X\n",source->offset.offi); 
 	if( target->storage==DREG16 && source->storage==LOCAL )
 	{
-		printf("ADD\ts0,\ts%1X\n",source->offset.offi); 
-		printf("ADDCY\ts1,\ts%1X\n",source->offset.offi+1);
+		printf("ADD\ts00,\ts%02X\n",source->offset.offi); 
+		printf("ADDCY\ts01,\ts%02X\n",source->offset.offi+1);
 	}
 	
 	if( target->storage==DREG8 && source->storage==CONSTANT )
-		printf("ADD\ts0,\t%02X\n",source->offset.offv&0xff); 
+		printf("ADD\ts00,\t%02X\n",source->offset.offv&0xff); 
 	if( target->storage==DREG16 && source->storage==LOCAL )
 	{
-		printf("ADDCY\ts0,\t%02X\n",source->offset.offv&0xff); 
-		printf("ADDCY\ts1,\t%02X\n",(source->offset.offv>>8)&0xff);
+		printf("ADDCY\ts00,\t%02X\n",source->offset.offv&0xff); 
+		printf("ADDCY\ts01,\t%02X\n",(source->offset.offv>>8)&0xff);
 	}
 
 	return;
@@ -335,20 +335,20 @@ struct symstruct *target;
     {
 	if( source->storage == CONSTANT && target->type->typesize==1 )
 	{
-		printf("LOAD\ts%1X,\t%02X\n",target->offset.offi, source->offset.offv&0xff); 
+		printf("LOAD\ts%02X,\t%02X\n",target->offset.offi, source->offset.offv&0xff); 
 		return;
 	}
 	if( source->storage == CONSTANT && target->type->typesize==2 )
 	{
 		if( source->type->typesize==2 )
 		{
-			printf("LOAD\ts%1X,\t%02X\n",target->offset.offi, source->offset.offv&0xff);
-			printf("LOAD\ts%1X,\t%02X\n",target->offset.offi+1, (source->offset.offv>>8)&0xff);
+			printf("LOAD\ts%02X,\t%02X\n",target->offset.offi, source->offset.offv&0xff);
+			printf("LOAD\ts%02X,\t%02X\n",target->offset.offi+1, (source->offset.offv>>8)&0xff);
 		 }
 		if( source->type->typesize==1 )
 		{
-			printf("LOAD\ts%1X,\t%02X\n",target->offset.offi, source->offset.offv&0xff);
-			printf("LOAD\ts%1X,\t00\n",target->offset.offi+1);
+			printf("LOAD\ts%02X,\t%02X\n",target->offset.offi, source->offset.offv&0xff);
+			printf("LOAD\ts%02X,\t00\n",target->offset.offi+1);
 		}
 		 
 		return;
@@ -359,16 +359,16 @@ struct symstruct *target;
 	
 		if(target->type->typesize==1)
 		{
-			printf("ADD\ts0,\t%02X\n",source->offset.offi&0xff);
-			printf("LOAD\ts%1X,\ts0\n",target->offset.offi);
+			printf("ADD\ts00,\t%02X\n",source->offset.offi&0xff);
+			printf("LOAD\ts%02X,\ts00\n",target->offset.offi);
 		}	
 		if(target->type->typesize==2)
 		{
-			printf("LOAD\ts1,\t00\n");
-			printf("ADD\ts0,\t%02X\n",source->offset.offi&0xff);
-			printf("ADDCY\ts1,\t00\n");
-			printf("LOAD\ts%1X,\ts0\n",target->offset.offi);
-			printf("LOAD\ts%1X,\ts1\n",target->offset.offi+1);
+			printf("LOAD\ts01,\t00\n");
+			printf("ADD\ts00,\t%02X\n",source->offset.offi&0xff);
+			printf("ADDCY\ts01,\t00\n");
+			printf("LOAD\ts%02X,\ts00\n",target->offset.offi);
+			printf("LOAD\ts%02X,\ts01\n",target->offset.offi+1);
 		}	
 		return;
     	}
@@ -376,15 +376,15 @@ struct symstruct *target;
     	{
     		if(target->type->typesize==2)
     		{ 
-			printf("ADD\ts0,\t%02X\n",source->offset.offi&0xff);
-			printf("ADDCY\ts1,\t%02X\n",(source->offset.offi>>8)&0xff);
-			printf("LOAD\ts%1X,\ts0\n",target->offset.offi);
-			printf("LOAD\ts%1X,\ts1\n",target->offset.offi+1);
+			printf("ADD\ts00,\t%02X\n",source->offset.offi&0xff);
+			printf("ADDCY\ts01,\t%02X\n",(source->offset.offi>>8)&0xff);
+			printf("LOAD\ts%02X,\ts00\n",target->offset.offi);
+			printf("LOAD\ts%02X,\ts01\n",target->offset.offi+1);
 		}
 		if(target->type->typesize==1)
     		{ 
-			printf("ADD\ts0,\t%02X\n",source->offset.offi&0xff);
-			printf("LOAD\ts%1X,\ts0\n",target->offset.offi);
+			printf("ADD\ts00,\t%02X\n",source->offset.offi&0xff);
+			printf("LOAD\ts%02X,\ts00\n",target->offset.offi);
 		}
 		return;
     	}
@@ -393,13 +393,13 @@ struct symstruct *target;
     	{
 	
 		
-		printf("LOAD\ts%1X,\ts0\n",target->offset.offi);
+		printf("LOAD\ts%02X,\ts00\n",target->offset.offi);
 		return;
     	}
     	if ( source->storage == DREG16 )
     	{
-		printf("LOAD\ts%1X,\ts0\n",target->offset.offi);
-		printf("LOAD\ts%1X,\ts1\n",target->offset.offi+1);
+		printf("LOAD\ts%02X,\ts00\n",target->offset.offi);
+		printf("LOAD\ts%02X,\ts01\n",target->offset.offi+1);
 		
 		return;
     	}
@@ -407,20 +407,20 @@ struct symstruct *target;
 	{
 		if(  target->type->typesize==1 )
 		{
-			printf("LOAD\ts%1X,\ts%1X\n",target->offset.offi, source->offset.offi); 
+			printf("LOAD\ts%02X,\ts%02X\n",target->offset.offi, source->offset.offi); 
 			return;
 		}
 		if( target->type->typesize==2 )
 		{
 			if(  source->type->typesize==2 )
 			{
-				printf("LOAD\ts%1X,\ts%1X\n",target->offset.offi, source->offset.offi);
-				printf("LOAD\ts%1X,\ts%1X\n",target->offset.offi+1, source->offset.offi+1);
+				printf("LOAD\ts%02X,\ts%02X\n",target->offset.offi, source->offset.offi);
+				printf("LOAD\ts%02X,\ts%02X\n",target->offset.offi+1, source->offset.offi+1);
 		 	}
 			if(  source->type->typesize==1 )
 			{
-				printf("LOAD\ts%1X,\ts%1X\n",target->offset.offi, source->offset.offi);
-				printf("LOAD\ts%1X,\t00\n",target->offset.offi+1);
+				printf("LOAD\ts%02X,\ts%02X\n",target->offset.offi, source->offset.offi);
+				printf("LOAD\ts%02X,\t00\n",target->offset.offi+1);
 		 	}
 		 	return;
 		}
@@ -431,13 +431,13 @@ struct symstruct *target;
     {
 	if( source->storage == CONSTANT )
         {
-		printf("LOAD\ts0,\t%02X\n", source->offset.offv&0xff);
-		printf("OUTPUT\ts0,\t%02X\n",target->offset.offv&0xff); 
+		printf("LOAD\ts00,\t%02X\n", source->offset.offv&0xff);
+		printf("OUTPUT\ts00,\t%02X\n",target->offset.offv&0xff); 
  		return;
 	}
 	if( source->storage == LOCAL )
         {
-		printf("OUTPUT\ts%1X,\t%02X\n",source->offset.offi,target->offset.offv&0xff); 
+		printf("OUTPUT\ts%02X,\t%02X\n",source->offset.offi,target->offset.offv&0xff); 
  		return;
 	}
     }
@@ -446,7 +446,7 @@ struct symstruct *target;
 	
 	if( target->storage == LOCAL )
         {
-		printf("INPUT\ts%1X,\t%02X\n",target->offset.offi,source->offset.offv&0xff); 
+		printf("INPUT\ts%02X,\t%02X\n",target->offset.offi,source->offset.offv&0xff); 
  		return;
 	}
     }
@@ -455,16 +455,16 @@ struct symstruct *target;
     {
 	if( source->storage == CONSTANT )
         {
-		printf("LOAD\ts0,\t%02X\n", source->offset.offv&0xff);
-		printf("OUTPUT\ts0,\t%02X\n",target->offset.offv&0xff); 
- 		printf("LOAD\ts1,\t%02X\n", (source->offset.offv>>8)&0xff);
-		printf("OUTPUT\ts1,\t%02X\n",(target->offset.offv+1)&0xff); 
+		printf("LOAD\ts00,\t%02X\n", source->offset.offv&0xff);
+		printf("OUTPUT\ts00,\t%02X\n",target->offset.offv&0xff); 
+ 		printf("LOAD\ts01,\t%02X\n", (source->offset.offv>>8)&0xff);
+		printf("OUTPUT\ts01,\t%02X\n",(target->offset.offv+1)&0xff); 
  		return;
 	}
 	if( source->storage == LOCAL )
         {
-		printf("OUTPUT\ts%1X,\t%02X\n",source->offset.offi,target->offset.offv&0xff); 
- 		printf("OUTPUT\ts%1X,\t%02X\n",source->offset.offi+1,(target->offset.offv+1)&0xff); 
+		printf("OUTPUT\ts%02X,\t%02X\n",source->offset.offi,target->offset.offv&0xff); 
+ 		printf("OUTPUT\ts%02X,\t%02X\n",source->offset.offi+1,(target->offset.offv+1)&0xff); 
  		return;
 	}
     }
@@ -473,8 +473,8 @@ struct symstruct *target;
 	
 	if( target->storage == LOCAL )
         {
-		printf("INPUT\ts%1X,\t%02X\n",target->offset.offi,source->offset.offv&0xff); 
- 		printf("INPUT\ts%1X,\t%02X\n",target->offset.offi+1,(source->offset.offv+1)&0xff); 
+		printf("INPUT\ts%02X,\t%02X\n",target->offset.offi,source->offset.offv&0xff); 
+ 		printf("INPUT\ts%02X,\t%02X\n",target->offset.offi+1,(source->offset.offv+1)&0xff); 
  		return;
 	}
     }		
@@ -489,41 +489,41 @@ int test;
 	{	
 		if( target->storage==LOCAL )
 		{
-			printf("LOAD\ts0,\ts%1X\n", target->offset.offi);
+			printf("LOAD\ts00,\ts%02X\n", target->offset.offi);
 		}
 		if( target->storage==CONSTANT )
 		{
-			printf("LOAD\ts0,\t%02X\n", target->offset.offv&0xff);
+			printf("LOAD\ts00,\t%02X\n", target->offset.offv&0xff);
 		}
 		if( source->storage==LOCAL )
-			printf("SUB\ts0,\ts%1X\n",source->offset.offi);
+			printf("SUB\ts00,\ts%02X\n",source->offset.offi);
 		if( source->storage==CONSTANT )
-			printf("SUB\ts0,\t%02X\n",source->offset.offv&0xff);
+			printf("SUB\ts00,\t%02X\n",source->offset.offv&0xff);
 	}
 	if( target->type->typesize == 2 )
 	{	
 		if( target->storage==LOCAL )
 		{
-			printf("LOAD\ts0,\ts%1X\n", target->offset.offi);
-			printf("LOAD\ts1,\ts%1X\n", target->offset.offi+1);
+			printf("LOAD\ts00,\ts%02X\n", target->offset.offi);
+			printf("LOAD\ts01,\ts%02X\n", target->offset.offi+1);
 		}
 		if( target->storage==CONSTANT )
 		{
-			printf("LOAD\ts0,\t%02X\n", target->offset.offv&0xff);
-			printf("LOAD\ts1,\t%02X\n", (target->offset.offv>>8)&0xff);
+			printf("LOAD\ts00,\t%02X\n", target->offset.offv&0xff);
+			printf("LOAD\ts01,\t%02X\n", (target->offset.offv>>8)&0xff);
 		}
 		if( source->storage==LOCAL )
 		{
-			printf("SUB\ts0,\ts%1X\n",source->offset.offi);
-			printf("SUBCY\ts1,\ts%1X\n",source->offset.offi+1);
+			printf("SUB\ts00,\ts%02X\n",source->offset.offi);
+			printf("SUBCY\ts01,\ts%02X\n",source->offset.offi+1);
 		}
 		if( source->storage==CONSTANT )
 		{
-			printf("SUB\ts0,\t%02X\n",source->offset.offv&0xff);
-			printf("SUBCY\ts1,\t%02X\n",(source->offset.offv>>8)&0xff);
+			printf("SUB\ts00,\t%02X\n",source->offset.offv&0xff);
+			printf("SUBCY\ts01,\t%02X\n",(source->offset.offv>>8)&0xff);
 		}
 		if( test==1 )
-			printf("OR\ts0,\ts1\n");
+			printf("OR\ts00,\ts01\n");
 	}
 	
 }
@@ -537,22 +537,22 @@ struct symstruct *source;
 	if(source->type->typesize==1)
 	{
 		if(op==POSTINCOP)
-			printf("ADD\ts%1X,\t01\n",source->offset.offi);	 	
+			printf("ADD\ts%02X,\t01\n",source->offset.offi);	 	
 		if(op==POSTDECOP)
-			printf("SUB\ts%1X,\t01\n",source->offset.offi);	 	
+			printf("SUB\ts%02X,\t01\n",source->offset.offi);	 	
 	}
 	
 	if(source->type->typesize==2)
 	{
 		if(op==POSTINCOP)
 		{
-			printf("ADD\ts%1X,\t01\n",source->offset.offi);	 	
-			printf("ADDCY\ts%1X,\t00\n",source->offset.offi+1);	 	
+			printf("ADD\ts%02X,\t01\n",source->offset.offi);	 	
+			printf("ADDCY\ts%02X,\t00\n",source->offset.offi+1);	 	
 		}
 		if(op==POSTDECOP)
 		{
-			printf("SUB\ts%1X,\t01\n",source->offset.offi);	
- 			printf("SUBCY\ts%1X,\t00\n",source->offset.offi+1);	
+			printf("SUB\ts%02X,\t01\n",source->offset.offi);	
+ 			printf("SUBCY\ts%02X,\t00\n",source->offset.offi+1);	
 		}	
 	}
     }
@@ -607,7 +607,7 @@ struct symstruct *target;
 {
 	if( target->storage==LOCAL )
 	{
-		printf("XOR\ts%1X,\tFF\n",target->offset.offi);
+		printf("XOR\ts%02X,\tFF\n",target->offset.offi);
 	}
 }
 
@@ -621,12 +621,12 @@ struct symstruct *target;
 	{
 		if( target->type->typesize==1 )
 		{
-			printf("LOAD\ts0,\ts%1X\n",target->offset.offi);
+			printf("LOAD\ts00,\ts%02X\n",target->offset.offi);
 		}
 		if( target->type->typesize==2 )
 		{
-			printf("LOAD\ts0,\ts%1X\n",target->offset.offi);
-			printf("LOAD\ts1,\ts%1X\n",target->offset.offi+1);
+			printf("LOAD\ts00,\ts%02X\n",target->offset.offi);
+			printf("LOAD\ts01,\ts%02X\n",target->offset.offi+1);
 		}
 	}
 	if( target->type->typesize==1 )
@@ -644,15 +644,15 @@ struct symstruct *target;
 		{
 			if( target->type->typesize==1 )
 			{
-				printf("LOAD\ts0,\ts%1X\n",target->offset.offi);
-				printf("SUB\ts0,\ts%1X\n",source->offset.offi); 
+				printf("LOAD\ts00,\ts%02X\n",target->offset.offi);
+				printf("SUB\ts00,\ts%02X\n",source->offset.offi); 
 			}
 			if( target->type->typesize==2 )
 			{
-				printf("LOAD\ts0,\ts%1X\n",target->offset.offi);
-				printf("LOAD\ts1,\ts%1X\n",target->offset.offi+1);
-				printf("SUB\ts0,\ts%1X\n",source->offset.offi);
-				printf("SUBCY\ts1,\ts%1X\n",source->offset.offi+1);
+				printf("LOAD\ts00,\ts%02X\n",target->offset.offi);
+				printf("LOAD\ts01,\ts%02X\n",target->offset.offi+1);
+				printf("SUB\ts00,\ts%02X\n",source->offset.offi);
+				printf("SUBCY\ts01,\ts%02X\n",source->offset.offi+1);
 			}
 
 			if( target->type->typesize==1 )
@@ -664,19 +664,19 @@ struct symstruct *target;
 	return;
     }	
 	if( target->storage==DREG8 && source->storage==LOCAL )
-		printf("SUB\ts0,\ts%1X\n",source->offset.offi); 
+		printf("SUB\ts00,\ts%02X\n",source->offset.offi); 
 	if( target->storage==DREG16 && source->storage==LOCAL )
 	{
-		printf("SUB\ts0,\ts%1X\n",source->offset.offi); 
-		printf("SUBCY\ts1,\ts%1X\n",source->offset.offi+1);
+		printf("SUB\ts00,\ts%02X\n",source->offset.offi); 
+		printf("SUBCY\ts01,\ts%02X\n",source->offset.offi+1);
 	}
 	
 	if( target->storage==DREG8 && source->storage==CONSTANT )
-		printf("SUB\ts0,\t%02X\n",source->offset.offv&0xff); 
+		printf("SUB\ts00,\t%02X\n",source->offset.offv&0xff); 
 	if( target->storage==DREG16 && source->storage==LOCAL )
 	{
-		printf("SUB\ts0,\t%02X\n",source->offset.offv&0xff); 
-		printf("SUBCY\ts1,\t%02X\n",(source->offset.offv>>8)&0xff);
+		printf("SUB\ts00,\t%02X\n",source->offset.offv&0xff); 
+		printf("SUBCY\ts01,\t%02X\n",(source->offset.offv>>8)&0xff);
 	}
 
 	return;
@@ -694,15 +694,15 @@ struct symstruct *target;
 	if( target->storage == LOCAL && target->type->typesize==1)
 	{
 		for( i=0;i<source->offset.offv;i++)
-			printf("SL0\ts%1X\n",target->offset.offi); 
+			printf("SL0\ts%02X\n",target->offset.offi); 
 		return;
 	}
 	if( target->storage == LOCAL && target->type->typesize==2 )
 	{
 		for( i=0;i<source->offset.offv;i++)
 		{
-			printf("SL0\ts%1X\n" ,target->offset.offi); 
-			printf("SLA\ts%1X\n" ,target->offset.offi+1); 
+			printf("SL0\ts%02X\n" ,target->offset.offi); 
+			printf("SLA\ts%02X\n" ,target->offset.offi+1); 
 		}
 		return;
 	}
@@ -719,15 +719,15 @@ struct symstruct *target;
 	if( target->storage == LOCAL && target->type->typesize==1)
 	{
 		for( i=0;i<source->offset.offv;i++)
-			printf("SR0\ts%1X\n",target->offset.offi); 
+			printf("SR0\ts%02X\n",target->offset.offi); 
 		return;
 	}
 	if( target->storage == LOCAL && target->type->typesize==2 )
 	{
 		for( i=0;i<source->offset.offv;i++)
 		{
-			printf("SR0\ts%1X\n" ,target->offset.offi+1); 
-			printf("SRA\ts%1X\n" ,target->offset.offi); 
+			printf("SR0\ts%02X\n" ,target->offset.offi+1); 
+			printf("SRA\ts%02X\n" ,target->offset.offi); 
 		}
 		return;
 	}
@@ -741,19 +741,19 @@ ccode_t *pcondtrue;
 {
     if( target->storage==DREG8 )
     {
-    	printf("SUB\ts0,\t00\n");
+    	printf("SUB\ts00,\t00\n");
     }
     if( target->storage==DREG16 )
     {
-    	printf("OR\ts0,\ts1\n");
+    	printf("OR\ts00,\ts01\n");
     }
     if( target->storage==LOCAL && target->type->typesize==1 )
     {
-    	printf("SUB\ts%1X,\t00\n",target->offset.offi);
+    	printf("SUB\ts%02X,\t00\n",target->offset.offi);
     }
     if( target->storage==LOCAL && target->type->typesize==2 )
     {
-    	printf("LOAD\ts0,\ts%1X\n",target->offset.offi);
-    	printf("OR\ts0,\ts%1X\n",target->offset.offi+1);
+    	printf("LOAD\ts00,\ts%02X\n",target->offset.offi);
+    	printf("OR\ts00,\ts%02X\n",target->offset.offi+1);
     }
 }

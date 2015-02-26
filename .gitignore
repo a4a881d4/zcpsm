@@ -32,6 +32,7 @@ proj/*
 lib/*
 managed_ip_project/*
 .Xil
+bin/*
 
 *.yy.c
 *.tab.h
