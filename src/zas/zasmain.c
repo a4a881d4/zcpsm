@@ -26,6 +26,7 @@ char initstr[4][16][65];
 void genLog( char *psmFile );
 char strBitString[256];
 char *genBitString(int x,int l);
+void genCoeFile();
 
 processLabel()
 {
@@ -258,17 +259,11 @@ main(int argc, char *argv[])
 	close(yyin);
 	processLabel();
 	strcpy(fn,argv[1]);
-/*	
-	strcat(fn,".vhd");
+	
+	strcat(fn,".coe");
 	fp=fopen(fn,"wt");
-	if( codeline<256 )
-		genVhdlRam(argv[1],1);
-	else if( codeline<512 )
-		genVhdlRam(argv[1],2);
-	else
-		genVhdlRam(argv[1],4);
+	genCoeFile();
 	fclose(fp);
-*/
 	strcpy(fn,argv[1]);
 	strcat(fn,"_romonly.vhd");
 	fp=fopen(fn,"wt");
@@ -287,8 +282,6 @@ main(int argc, char *argv[])
 	for( i=0;i<codeline;i++ )
 		fprintf(fp,"%05X \n",code[i]);
 	fclose(fp);
-	
-	
 }
 
 void getLine( FILE *fp, char *str )
@@ -376,4 +369,13 @@ char *genBitString(int x,int l)
 	return strBitString;
 }
 
-
+void genCoeFile()
+{
+	int i;
+	fprintf(fp,"memory_initialization_radix = 16;\n");
+	fprintf(fp,"memory_initialization_vector =\n"); 
+	for( i=0;i<codeline-1;i++ ) {
+		fprintf(fp,"%05X,\n",code[i]);
+	}
+	fprintf(fp,"%05X;\n",code[i]);
+}
