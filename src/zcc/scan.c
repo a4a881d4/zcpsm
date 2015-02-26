@@ -17,6 +17,7 @@
 #undef EXTERN
 #define EXTERN
 #include "scan.h"
+#include<stdio.h>
 
 PUBLIC sym_t symofchar[256] =
 {

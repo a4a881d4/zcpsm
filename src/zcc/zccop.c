@@ -13,6 +13,7 @@
 #include "sizes.h"
 #include "type.h"
 #include "parse.h"
+#include<stdio.h>
 
 extern offset_t autoVarPos;		/* auto Number */
 extern offset_t globalVarPos;		/* global Number */

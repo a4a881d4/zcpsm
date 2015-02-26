@@ -1,6 +1,6 @@
 YACC = byacc
 LEX = flex
-CC = /home/zhaom/kcpsm/zcc/src/cc86-cc1
+CC = ../zcc/cc86-cc1
 
 all:zas
 
@@ -14,7 +14,7 @@ zas:y.tab.h lex.yy.c zasmain.c
 	gcc -g  -DYYDEBUG -o zas lex.yy.c zasmain.c y.tab.c
 
 clean:
-	rm -f zas; rm -f zas.exe;rm -f lex.yy.c; rm -f y.tab.c; rm -f y.tab.h; rm *.bak; rm -f *~;
+	rm -f zas; rm -f zas.exe;rm -f lex.yy.c; rm -f y.tab.c; rm -f y.tab.h; rm -f *.bak; rm -f *~;
 	
 
 test:test.psm

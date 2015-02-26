@@ -14,6 +14,7 @@
 #include "sizes.h"
 #include "table.h"
 #include "type.h"
+#include<stdio.h>
 
 #undef EXTERN
 #define EXTERN

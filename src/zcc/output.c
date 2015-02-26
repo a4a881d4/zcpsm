@@ -8,6 +8,7 @@
 #include "os.h"
 #include "sizes.h"
 #include "table.h"
+#include<stdio.h>
 
 #undef EXTERN
 #define EXTERN

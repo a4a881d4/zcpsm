@@ -2,12 +2,16 @@
 
 /* Copyright (C) 1992 Bruce Evans */
 
+/*
 #if __STDC__
 #define P(x)	x
 #else
 #define P(x)	()
 #endif
+*/
+#define P(x) x
 
+#if 1
 /* assign.c */
 void assign P((struct symstruct *source, struct symstruct *target));
 void cast P((struct typestruct *type, struct symstruct *target));
@@ -330,6 +334,8 @@ void compound P((void));
 void outswoffset P((offset_t offset));
 void outswstacklab P((void));
 
+struct symstruct *_zcc_addglb P((char *name, struct typestruct *type));
+
 /* table.c */
 struct symstruct *addglb P((char *name, struct typestruct *type));
 struct symstruct *addloc P((char *name, struct typestruct *type));
@@ -373,6 +379,11 @@ void typeinit P((void));
 int creat P((const char *_path, int _mode));
 int open P((const char *_path, int _oflag, ...));
 
+#include<stdlib.h>
+#include<string.h>
+#include<unistd.h>
+
+#if 0
 /* library - stdlib.h */
 double atof P((const char *_str));
 void exit P((int _status));
@@ -397,3 +408,6 @@ int isatty P((int _fd));
 long lseek P((int _fd, long _offset, int _whence));
 int read P((int _fd, char *_buf, unsigned _nbytes));
 int write P((int _fd, char *_buf, unsigned _nbytes));
+#endif
+
+#endif

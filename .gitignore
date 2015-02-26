@@ -36,3 +36,5 @@ managed_ip_project/*
 *.yy.c
 *.tab.h
 *.tab.c
+
+*.stackdump
