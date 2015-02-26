@@ -1,5 +1,6 @@
 #include"zas.h"
 #include<stdio.h>
+#include<string.h>
 #undef DEBUG
 int codeline;
 extern int yydebug;

@@ -1,7 +1,8 @@
 /*	zas.lex	*/
 %{
+#include<string.h>
 #include "y.tab.h"
-extern int yylval;
+extern long yylval;
 extern char *yytext;
 extern int lineno;
 %}
@@ -38,8 +39,8 @@ RETURN	{ return(RETURN_TOKEN); }
 s[0-9A-Z]	{ yylval = ctox(yytext+1); return(REG); }
 \:	{ return(LABEL_END); }
 \,	{ return(COMMA); }
-[0-9A-F][0-9A-F]	{ yylval = strdup(yytext); return(DIRECT); }
-[_L][a-zA-Z0-9]*	{ yylval = strdup(yytext); return(LABEL); }
+[0-9A-F][0-9A-F]	{ yylval = (long)strdup(yytext); return(DIRECT); }
+[_L][a-zA-Z0-9]*	{ yylval = (long)strdup(yytext); return(LABEL); }
 [ \t\n]+	
 %%
 

@@ -69,7 +69,7 @@ arithmeticop: ADD_TOKEN {twoArgOp=0;}
 	| SUBCY_TOKEN   {twoArgOp=3;}
 	;
 secondarg: REG {isDirect=0;arg2=$1;}
-	| DIRECT {isDirect=1;arg2=atox($1); }
+	| DIRECT {isDirect=1;arg2=atox((char *)$1); }
 	;
 twoarg: twoAop REG COMMA secondarg 
 	{	arg1=$2;
@@ -146,7 +146,7 @@ inout: INPUT_TOKEN REG COMMA secondarg
 	;
 
 label_dec: LABEL LABEL_END
-	{	strcpy(memlabel.label[memlabel.length].name,$1);
+	{	strcpy(memlabel.label[memlabel.length].name,(char *)$1);
 		memlabel.label[memlabel.length].pos=codeline;
 		memlabel.length++;
 		lineno++;

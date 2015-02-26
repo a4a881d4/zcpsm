@@ -38,3 +38,4 @@ managed_ip_project/*
 *.tab.c
 
 *.stackdump
+*.psm

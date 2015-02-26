@@ -29,4 +29,6 @@ void need_label();
 int ctox(char *);
 int atox(char *);
 
+#define YYSTYPE long
+
 #endif
