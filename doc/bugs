@@ -1,0 +1,2 @@
+1. shift can not write as: a = b >> 1 should be a = b; a >>= 1;
+2. short add char bug, should be ushort_a += uchar_b;
