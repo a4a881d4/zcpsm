@@ -4,7 +4,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
 
-entity fifo_async_almost_full is
+entity fifo_async is
 	generic(
 		DEPTH		: natural;
 		AWIDTH		: natural;
@@ -21,13 +21,12 @@ entity fifo_async_almost_full is
 		rdb		: in std_logic;
 		dob		: out std_logic_vector(DWIDTH - 1 downto 0);  -- dob delay = 2 clk compared with rdb 
 		empty	: out std_logic;
-		full	: out std_logic;  
-		almost_full	: out std_logic;
+		full	: out std_logic;
 		dn		: out std_logic_vector(AWIDTH -1 downto 0)
 		);
-end fifo_async_almost_full;
+end fifo_async;
 
-architecture fast_read of fifo_async_almost_full is
+architecture fast_read of fifo_async is
 	
 	component blockdram
 		generic( 
@@ -133,15 +132,14 @@ begin
 		end process;
 	end generate use_dis_ram;
 	
-	WritePointorCtrl	: process(reset,clr,clka)
+	WritePointorCtrl	: process(reset,clka)
 	begin
-		if reset = '1' or clr = '1' then
+		if reset = '1' then
 			wp <= (others => '0');
 		elsif rising_edge(clka) then
---			if clr = '1' then
---				wp <= (others => '0');
---			elsif full_flag = '0' and wea = '1' then
-			if full_flag = '0' and wea = '1' then
+			if clr = '1' then
+				wp <= (others => '0');
+			elsif full_flag = '0' and wea = '1' then
 				wp <= wp + 1;
 			end if;
 		end if;
@@ -161,43 +159,40 @@ begin
 			flag		=> open
 			); 
 	
-	WritePointorCtrl_sync	: process(reset,clr,clkb)
+	WritePointorCtrl_sync	: process(reset,clkb)
 	begin
-		if reset = '1' or clr = '1' then
+		if reset = '1' then
 			wp_sync <= (others => '0');
 		elsif rising_edge(clkb) then
---			if clr = '1' then
---				wp_sync <= (others => '0');
---			elsif full_flag = '0' and wea_sync = '1' then
-			if full_flag = '0' and wea_sync = '1' then
+			if clr = '1' then
+				wp_sync <= (others => '0');
+			elsif full_flag = '0' and wea_sync = '1' then
 				wp_sync <= wp_sync + 1;
 			end if;
 		end if;
 	end process;
 	
-	ReadPointorCtrl		: process(reset,clr,clkb)
+	ReadPointorCtrl		: process(reset,clkb)
 	begin
-		if reset = '1' or clr = '1' then
+		if reset = '1' then
 			rp <= (others => '0');
 		elsif rising_edge(clkb) then
---			if clr = '1' then
---				rp <= (others => '0');
---			elsif empty_flag = '0' and rdb = '1' then
-			if empty_flag = '0' and rdb = '1' then
+			if clr = '1' then
+				rp <= (others => '0');
+			elsif empty_flag = '0' and rdb = '1' then
 				rp <= rp + 1;
 			end if;
 		end if;
 	end process;
 	
-	GetEmptyFlag	: process(reset,clr,clkb)
+	GetEmptyFlag	: process(reset,clkb)
 	begin
-		if reset = '1' or clr = '1' then
+		if reset = '1' then
 			empty_flag <= '1';
 		elsif rising_edge(clkb) then
---			if clr = '1' then
---				empty_flag <= '1';
---			elsif (wp_sync = rp) and (wea_sync = '1') then
-			if (wp_sync = rp) and (wea_sync = '1') then
+			if clr = '1' then
+				empty_flag <= '1';
+			elsif (wp_sync = rp) and (wea_sync = '1') then
 				empty_flag <= '0';
 			elsif (wp_sync = rp + 1) and (rdb = '1'and wea_sync = '0') then
 				empty_flag <= '1';
@@ -206,15 +201,14 @@ begin
 	end process;
 	empty <= empty_flag;
 	
-	GetFullFlag		: process(reset,clr,clkb)
+	GetFullFlag		: process(reset,clkb)
 	begin
-		if reset = '1' or clr = '1' then
+		if reset = '1' then
 			full_flag <= '0';
 		elsif rising_edge(clkb) then
---			if clr = '1' then
---				full_flag <= '0';
---			elsif (wp_sync = rp - 1) and (wea_sync = '1' and rdb = '0') then
-			if (wp_sync = rp - 1) and (wea_sync = '1' and rdb = '0') then
+			if clr = '1' then
+				full_flag <= '0';
+			elsif (wp_sync = rp - 1) and (wea_sync = '1' and rdb = '0') then
 				full_flag <= '1';
 			elsif (wp_sync = rp) and (rdb = '1') then
 				full_flag <= '0';
@@ -229,7 +223,7 @@ end fast_read;
 
 ---------------------------------------------------------------------------------
 
-architecture fast_write of fifo_async_almost_full is
+architecture fast_write of fifo_async is
 	
 	component blockdram
 		generic( 
@@ -335,15 +329,14 @@ begin
 		end process;
 	end generate use_dis_ram;
 	
-	WritePointorCtrl	: process(reset,clr,clka)
+	WritePointorCtrl	: process(reset,clka)
 	begin
-		if reset = '1' or clr = '1' then
+		if reset = '1' then
 			wp <= (others => '0');
 		elsif rising_edge(clka) then
---			if clr = '1' then
---				wp <= (others => '0');
---			elsif full_flag = '0' and wea = '1' then
-			if full_flag = '0' and wea = '1' then
+			if clr = '1' then
+				wp <= (others => '0');
+			elsif full_flag = '0' and wea = '1' then
 				wp <= wp + 1;
 			end if;
 		end if;
@@ -351,15 +344,14 @@ begin
 	
 	ram_we <= wea when full_flag = '0' else '0';
 	
-	ReadPointorCtrl		: process(reset,clr,clkb)
+	ReadPointorCtrl		: process(reset,clkb)
 	begin
-		if reset = '1' or clr = '1' then
+		if reset = '1' then
 			rp <= (others => '0');
 		elsif rising_edge(clkb) then
---			if clr = '1' then
---				rp <= (others => '0');
---			elsif empty_flag = '0' and rdb = '1' then
-			if empty_flag = '0' and rdb = '1' then
+			if clr = '1' then
+				rp <= (others => '0');
+			elsif empty_flag = '0' and rdb = '1' then
 				rp <= rp + 1;
 			end if;
 		end if;
@@ -377,29 +369,27 @@ begin
 			flag		=> open
 			);
 			
-	ReadPointorCtrl_sync	: process(reset,clr,clka)
+	ReadPointorCtrl_sync	: process(reset,clka)
 	begin
-		if reset = '1' or clr = '1' then
+		if reset = '1' then
 			rp_sync <= (others => '0');
 		elsif rising_edge(clka) then
---			if clr = '1' then
---				rp_sync <= (others => '0');
---			elsif empty_flag = '0' and rdb_sync = '1' then
-			if empty_flag = '0' and rdb_sync = '1' then
+			if clr = '1' then
+				rp_sync <= (others => '0');
+			elsif empty_flag = '0' and rdb_sync = '1' then
 				rp_sync <= rp_sync + 1;
 			end if;
 		end if;
 	end process;	
 			
-	GetEmptyFlag	: process(reset,clr,clka)
+	GetEmptyFlag	: process(reset,clka)
 	begin
-		if reset = '1' or clr = '1' then
+		if reset = '1' then
 			empty_flag <= '1';
 		elsif rising_edge(clka) then
---			if clr = '1' then
---				empty_flag <= '1';
---			elsif (wp = rp_sync) and (wea = '1') then
-			if (wp = rp_sync) and (wea = '1') then
+			if clr = '1' then
+				empty_flag <= '1';
+			elsif (wp = rp_sync) and (wea = '1') then
 				empty_flag <= '0';
 			elsif (wp = rp_sync + 1) and (rdb_sync = '1'and wea = '0') then
 				empty_flag <= '1';
@@ -408,15 +398,14 @@ begin
 	end process;
 	empty <= empty_flag;
 	
-	GetFullFlag		: process(reset,clr,clka)
+	GetFullFlag		: process(reset,clka)
 	begin
-		if reset = '1' or clr = '1' then
+		if reset = '1' then
 			full_flag <= '0';  -- modified 2006-05-13
 		elsif rising_edge(clka) then
---			if clr = '1' then
---				full_flag <= '0';
---			elsif (wp = rp_sync - 1) and (wea = '1' and rdb_sync = '0') then
-			if (wp = rp_sync - 1) and (wea = '1' and rdb_sync = '0') then
+			if clr = '1' then
+				full_flag <= '0';
+			elsif (wp = rp_sync - 1) and (wea = '1' and rdb_sync = '0') then
 				full_flag <= '1';
 			elsif (wp = rp_sync) and (rdb_sync = '1') then
 				full_flag <= '0';
@@ -424,22 +413,6 @@ begin
 		end if;
 	end process;
 	full <= full_flag;
-	
-	GetAlmostFull		: process(reset,clr,clka)
-	begin
-		if reset = '1' or clr = '1' then
-			almost_full <= '0';  -- modified 2006-05-13
-		elsif rising_edge(clka) then
---			if clr = '1' then
---				almost_full <= '0';
---			elsif (wp = rp_sync - 2) and (wea = '1' and rdb_sync = '0') then
-			if (wp = rp_sync - 2) and (wea = '1' and rdb_sync = '0') then
-				almost_full <= '1';
-			elsif (wp = rp_sync - 1) and (wea = '0' and rdb_sync = '1') then
-				almost_full <= '0';
-			end if;
-		end if;
-	end process;	 
 	
 	dn <= wp - rp_sync;
 	

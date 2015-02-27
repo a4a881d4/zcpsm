@@ -8,6 +8,7 @@ proc buildip { top } {
 	set_property ip_repo_paths  ../lib [current_project]
 	update_ip_catalog -rebuild
 	add_files ../src/example/eth_hub/vhd
+	add_files ../src/zcpsm
 	import_files -force
 	update_compile_order -fileset sources_1
 	set_property top $top [current_fileset]

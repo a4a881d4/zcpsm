@@ -44,14 +44,6 @@ entity eth is
 		recvtime_valid	:	out std_logic;	
 		localtime_locked:   out std_logic;
  
-		-- in/out only for test --
---		dbtask_port_id		:	out std_logic_vector(7 downto 0);
---		dbtask_write_strobe	:	out std_logic;
---		dbtask_out_port		:	out std_logic_vector(7 downto 0);
---		dbtask_read_strobe	:	out std_logic;
---		dbtask_in_port		:	in  std_logic_vector(7 downto 0);			
---	   	RxFIFO_Full			:	out std_logic;
---		TxFIFO_Empty		:	out std_logic;
 		----------------------------------------------	
 		
 		debugIO_port_id		:	out std_logic_vector(15 downto 0);
@@ -134,24 +126,17 @@ architecture arch_eth of eth is
 		ram_wdata : out std_logic_vector(15 downto 0));
 	end component;
 	
-	component ethrx_kcpsm
+	component ethrx_zcpsm
 		port(
 			reset				:	in	std_logic;
-			kcpsm_clk			:	in	std_logic;
+			clk					:	in	std_logic;
 			
 			port_id				:	out	std_logic_vector(7 downto 0);
 			write_strobe		:	out	std_logic;
 			out_port			:	out	std_logic_vector(7 downto 0);
 			read_strobe			:	out	std_logic;
-			in_port				:	in	std_logic_vector(7 downto 0);
-			
-			prog_ce				:	in	std_logic;
-			prog_reset			:	in	std_logic;
-			prog_wren			:	in	std_logic;
-			prog_addr			:	in	std_logic_vector(9 downto 0);
-			prog_wdata			:	in	std_logic_vector(15 downto 0);
-			prog_rdata			:	out	std_logic_vector(15 downto 0)
-			);
+			in_port				:	in	std_logic_vector(7 downto 0)
+		);
 	end component;	
 	
 	component ethrx_task 
@@ -246,23 +231,16 @@ architecture arch_eth of eth is
 		);
 	end component;
 	
-	component ethtx_kcpsm
+	component ethtx_zcpsm
 	port(
 		reset 				: in std_logic;
-		kcpsm_clk 			: in std_logic;
+		clk 			: in std_logic;
 		port_id 			: out std_logic_vector(7 downto 0);
 		write_strobe 		: out std_logic;
 		out_port 			: out std_logic_vector(7 downto 0);
 		read_strobe 		: out std_logic;
-		in_port 			: in std_logic_vector(7 downto 0);
-		
-		prog_ce 			: in std_logic;
-		prog_reset 			: in std_logic;
-		prog_wren 			: in std_logic;
-		prog_addr 			: in std_logic_vector(9 downto 0);
-		prog_wdata 			: in std_logic_vector(15 downto 0);
-		prog_rdata 			: out std_logic_vector(15 downto 0)
-		);
+		in_port 			: in std_logic_vector(7 downto 0)
+	);
 	end component;	
 	
 	component ethtx_task 
@@ -315,10 +293,10 @@ architecture arch_eth of eth is
 		);
 	end component;
 		
-	component db_kcpsm
+	component db_zcpsm
 	port(
 		reset : in std_logic;
-		kcpsm_clk : in std_logic;
+		clk : in std_logic;
 		port_id : out std_logic_vector(7 downto 0);
 		write_strobe : out std_logic;
 		out_port : out std_logic_vector(7 downto 0);
@@ -343,25 +321,6 @@ architecture arch_eth of eth is
 		kcpsm_in_port : out std_logic_vector(7 downto 0));
 	end component;
 
-	component kcpsm_programmer
-	port(
-		reset : in std_logic;
-		kcpsm_clk : in std_logic;
-		prog_id : out std_logic_vector(3 downto 0);
-		prog_reset : out std_logic;
-		prog_wren : out std_logic;
-		prog_addr : out std_logic_vector(9 downto 0);
-		prog_wdata : out std_logic_vector(15 downto 0);
-		prog_rdata : in std_logic_vector(15 downto 0);
-		debug_ce : in std_logic;
-		debug_port_id : in std_logic_vector(10 downto 0);
-		debug_write_strobe : in std_logic;
-		debug_out_port : in std_logic_vector(15 downto 0);
-		debug_read_strobe : in std_logic;
-		debug_in_port : out std_logic_vector(15 downto 0));
-	end component;
-	
-	
 	signal ethrx_port_id			:	std_logic_vector(7 downto 0);
 	signal ethrx_write_strobe		:	std_logic;
 	signal ethrx_out_port			:	std_logic_vector(7 downto 0);
@@ -389,15 +348,6 @@ architecture arch_eth of eth is
 	
 	signal debug_in_port_pro	:	std_logic_vector(15 downto 0);
 	
-	signal prog_id				:	std_logic_vector(3 downto 0);
-	signal prog_reset			:	std_logic;
-	signal prog_wren			:	std_logic;
-	signal prog_addr			:	std_logic_vector(9 downto 0);
-	signal prog_wdata			:	std_logic_vector(15 downto 0); 
-	signal prog_rdata			:	std_logic_vector(15 downto 0); 
-	signal prog_rdata_rx		:	std_logic_vector(15 downto 0);
-	signal prog_rdata_tx		:	std_logic_vector(15 downto 0);
-	
 	signal lastframe_flag		:	std_logic;
 	signal ethrx_busy			:	std_logic;
 	signal rxtask_wr_block		:	std_logic;
@@ -413,26 +363,12 @@ architecture arch_eth of eth is
 	signal db_rx_ce				:	std_logic;
 	signal db_tx_ce				:	std_logic;
 	signal db_debug_ce			:	std_logic;
-	signal prog_ethrx_ce		:	std_logic; 
-	signal prog_ethtx_ce		:	std_logic;
-	signal debug_prog_ce		:	std_logic; 
-	
---	signal test_0				:	std_logic_vector(3 downto 0);
 	signal txen_buf				:	std_logic;
 	
 begin
 
-	-- in/out only for test --
---	dbtask_port_id		<=	db_port_id;
---	dbtask_write_strobe	<=	db_write_strobe;
---	dbtask_out_port		<=	db_out_port;
---	dbtask_read_strobe	<=	db_read_strobe;
---	db_in_port			<=  dbtask_in_port when db_port_id(7 downto 4) = PORTS_DB_TX_TASK or db_port_id(7 downto 4) = PORTS_DB_RX_TASK else (others => 'Z');	
---	----------------------------------------
 	test(0)				<=  not rxdv;
 	test(1)				<=	not txen_buf;  
---	test(2)				<=	test_0(2);
---	test(3)				<=	test_0(3);	
 	------------------------------------------------------------------------------
 	--	RX
 	------------------------------------------------------------------------------
@@ -475,7 +411,6 @@ begin
 		ram_wren => ram_wren,
 		ram_waddr => ram_waddr,	
 		-----
---		test	=> test_0,
 		ram_wdata => ram_wdata
 		);
 	
@@ -483,24 +418,17 @@ begin
 	eth_rx_ce <= '1' when ethrx_port_id(7 downto 4) = PORTS_ETH_RX else '0';
 	eth_rxdma_ce <= '1' when ethrx_port_id(7 downto 4) = PORTS_ETH_RXDMA else '0';
 
-	u_ethrx_kcpsm : ethrx_kcpsm
+	u_ethrx_zcpsm : ethrx_zcpsm
 	port map(
 		reset 					=> reset,
-		kcpsm_clk 				=> kcpsm_clk,
+		clk 				=> kcpsm_clk,
 		port_id 				=> ethrx_port_id,
 		write_strobe 			=> ethrx_write_strobe,
 		out_port 				=> ethrx_out_port,
 		read_strobe 			=> ethrx_read_strobe,
-		in_port 				=> ethrx_in_port,
-		prog_ce 				=> prog_ethrx_ce,
-		prog_reset 				=> prog_reset,
-		prog_wren 				=> prog_wren,
-		prog_addr 				=> prog_addr,
-		prog_wdata 				=> prog_wdata,
-		prog_rdata 				=> prog_rdata_rx
-		); 
+		in_port 				=> ethrx_in_port
+	); 
 		
-	prog_ethrx_ce <= '1' when prog_id = ETHRX_KCPSM_ID else '0';	
 		
 	u_ethrx_task : ethrx_task  
 	generic map (
@@ -611,25 +539,16 @@ begin
 
 	-- eth tx kcpsm
 	
-	u_ethtx_kcpsm : ethtx_kcpsm
+	u_ethtx_zcpsm : ethtx_zcpsm
 	port map(
 		reset 					=> reset,
-		kcpsm_clk 				=> kcpsm_clk,
+		clk 				=> kcpsm_clk,
 		port_id 				=> ethtx_port_id,
 		write_strobe 			=> ethtx_write_strobe,
 		out_port 				=> ethtx_out_port,
 		read_strobe 			=> ethtx_read_strobe,
-		in_port 				=> ethtx_in_port, 
-		
-		prog_ce 				=> prog_ethtx_ce,
-		prog_reset 				=> prog_reset,
-		prog_wren 				=> prog_wren,
-		prog_addr 				=> prog_addr,
-		prog_wdata 				=> prog_wdata,
-		prog_rdata 				=> prog_rdata_tx
-		);
-		
-	prog_ethtx_ce <= '1' when prog_id = ETHTX_KCPSM_ID else '0';	
+		in_port 				=> ethtx_in_port
+	);
 		
 	mo_Eth_Tx_HighPriority : Eth_Tx_HighPriority
 		port map(
@@ -697,10 +616,10 @@ begin
 	--	DB KCPSM
 	------------------------------------------------------------------------------
 	
-	u_db_kcpsm : db_kcpsm
+	u_db_zcpsm : db_zcpsm
 	port map(
 		reset => reset,
-		kcpsm_clk => kcpsm_clk,
+		clk => kcpsm_clk,
 		port_id => db_port_id,
 		write_strobe => db_write_strobe,
 		out_port => db_out_port,
@@ -731,26 +650,6 @@ begin
 	
 	db_debug_ce <= '1' when db_port_id(7 downto 4) = PORTS_DB_DEBUG else '0';
 	
-	u_kcpsm_prog : kcpsm_programmer
-	port map(
-		reset 					=> reset,
-		kcpsm_clk 				=> kcpsm_clk,
-		prog_id 				=> prog_id,
-		prog_reset 				=> prog_reset,
-		prog_wren 				=> prog_wren,
-		prog_addr 				=> prog_addr,
-		prog_wdata 				=> prog_wdata,
-		prog_rdata 				=> prog_rdata,
-		debug_ce 				=> debug_prog_ce,
-		debug_port_id 			=> debug_port_id(10 downto 0),
-		debug_write_strobe 		=> debug_write_strobe,
-		debug_out_port 			=> debug_out_port,
-		debug_read_strobe 		=> debug_read_strobe,
-		debug_in_port 			=> debug_in_port_pro
-		);
-	
-	debug_prog_ce <= '1' when debug_port_id(15 downto 12) = PORTS_DEBUG_PROG else '0';
-	
 	------------------------------------------------------------------------------
 	-- IO
 	------------------------------------------------------------------------------
@@ -761,18 +660,7 @@ begin
 	debugIO_read_strobe	<= debug_read_strobe;	
 	debug_in_port		<= debug_in_port_pro when debug_port_id(15 downto 12) = PORTS_DEBUG_PROG else
 						   debugIO_in_port;	 
-						   
-		
-	
-	progIO_id			<=	prog_id;	
-	progIO_reset		<=	prog_reset;	
-	progIO_wren			<=	prog_wren;			
-	progIO_addr			<=	prog_addr;	
-	progIO_wdata		<=	prog_wdata;	
-	prog_rdata			<=	prog_rdata_rx when prog_id = ETHRX_KCPSM_ID else
-							prog_rdata_tx when prog_id = ETHTX_KCPSM_ID else
-							progIO_rdata;
-	
+
 	------------------------------------------------------------------------------
 	--	LOCAL ID
 	------------------------------------------------------------------------------
