@@ -40,3 +40,8 @@ bin/*
 
 *.stackdump
 *.psm
+.work
+*romonly.vhd
+*.hex
+*.coe
+*.log

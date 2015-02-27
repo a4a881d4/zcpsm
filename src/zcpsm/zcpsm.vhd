@@ -26,7 +26,6 @@ entity zcpsm is
 		out_port 	:	out std_logic_vector(7 downto 0);
 		read_strobe :	out std_logic;
 		in_port 	:	in std_logic_vector(7 downto 0);
-		interrupt 	:	in std_logic;
 		reset 		:	in std_logic;
 		clk 		:	in std_logic);
 end zcpsm;
