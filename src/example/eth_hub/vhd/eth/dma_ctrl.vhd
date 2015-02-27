@@ -187,7 +187,7 @@ begin
 	u_wr_ctrl : shiftreg
 	generic map(
 		width => 2,
-		depth => RD_DELAY --RD_DELAY + RD_CYCLE
+		depth => RD_DELAY + RD_CYCLE -- 100M RD_DELAY ??? a4a881d4
 		)
 	port map(
 		clk => clk,

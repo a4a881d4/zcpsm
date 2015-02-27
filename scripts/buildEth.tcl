@@ -31,3 +31,4 @@ proc buildip { top } {
 }
 
 buildip eth
+buildip g_eth
