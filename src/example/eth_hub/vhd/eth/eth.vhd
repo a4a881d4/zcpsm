@@ -321,6 +321,28 @@ architecture arch_eth of eth is
 		zcpsm_in_port : out std_logic_vector(7 downto 0));
 	end component;
 
+	component zcpsmDecode
+	port (
+		port_id_H	: in std_logic_vector(3 downto 0);
+		ce 			: out std_logic_vector(15 downto 0)
+	);
+	end component;
+
+	component macAddrConfig 
+	port (
+		ethtx_port_id		:	in	std_logic_vector(7 downto 0);
+		ethrx_port_id		:	in	std_logic_vector(7 downto 0);
+		db_port_id			:	in	std_logic_vector(7 downto 0);
+		local_id_MAC0_Req	:	in	std_logic_vector(7 downto 0);
+		local_id_MAC0_A		:	in	std_logic_vector(7 downto 0);	
+		local_id_MAC0_B		:	in	std_logic_vector(7 downto 0);	
+		local_id			:	in	std_logic_vector(39 downto 0);	
+		ethtx_in_port 		: out std_logic_vector(7 downto 0);
+		ethrx_in_port 		: out std_logic_vector(7 downto 0);
+		db_in_port	 		: out std_logic_vector(7 downto 0)
+	);
+	end component;
+	
 	signal ethrx_port_id			:	std_logic_vector(7 downto 0);
 	signal ethrx_write_strobe		:	std_logic;
 	signal ethrx_out_port			:	std_logic_vector(7 downto 0);
@@ -364,6 +386,10 @@ architecture arch_eth of eth is
 	signal db_tx_ce				:	std_logic;
 	signal db_debug_ce			:	std_logic;
 	signal txen_buf				:	std_logic;
+	
+	signal db_ce				:	std_logic_vector(15 downto 0);
+	signal ethtx_ce				:	std_logic_vector(15 downto 0);
+	signal ethrx_ce				:	std_logic_vector(15 downto 0);
 	
 begin
 
@@ -414,9 +440,13 @@ begin
 		ram_wdata => ram_wdata
 		);
 	
-	db_rx_ce <= '1' when db_port_id(7 downto 4) = PORTS_DB_RX else '0';
-	eth_rx_ce <= '1' when ethrx_port_id(7 downto 4) = PORTS_ETH_RX else '0';
-	eth_rxdma_ce <= '1' when ethrx_port_id(7 downto 4) = PORTS_ETH_RXDMA else '0';
+--	db_rx_ce <= '1' when db_port_id(7 downto 4) = PORTS_DB_RX else '0';
+--	eth_rx_ce <= '1' when ethrx_port_id(7 downto 4) = PORTS_ETH_RX else '0';
+--	eth_rxdma_ce <= '1' when ethrx_port_id(7 downto 4) = PORTS_ETH_RXDMA else '0';
+	
+	db_rx_ce <= db_ce(conv_integer(PORTS_DB_RX));
+	eth_rx_ce <= ethrx_ce(conv_integer(PORTS_ETH_RX));
+	eth_rxdma_ce <= ethrx_ce(conv_integer(PORTS_ETH_RXDMA));
 
 	u_ethrx_zcpsm : ethrx_zcpsm
 	port map(
@@ -428,7 +458,12 @@ begin
 		read_strobe 			=> ethrx_read_strobe,
 		in_port 				=> ethrx_in_port
 	); 
-		
+
+	u_ethrx_zcpsm_ce : zcpsmDecode
+	port map(
+		port_id_H	=> ethrx_port_id( 7 downto 4),
+		ce 			=> ethrx_ce
+	);		
 		
 	u_ethrx_task : ethrx_task  
 	generic map (
@@ -461,7 +496,8 @@ begin
 		zcpsm_in_port				=>	ethrx_in_port
 		);
 
-	ethrx_task_ce <= '1' when ethrx_port_id(7 downto 4) = PORTS_ETH_RX_TASK else '0'; 
+--	ethrx_task_ce <= '1' when ethrx_port_id(7 downto 4) = PORTS_ETH_RX_TASK else '0'; 
+	ethrx_task_ce <= ethrx_ce(conv_integer(PORTS_ETH_RX_TASK));
 		
 	
 	u_dma2rxtask: dma2rxtask  
@@ -474,14 +510,14 @@ begin
 			
 		);
 		
-	ethrx_in_port <= 	local_id_MAC0_A when ethrx_port_id = PORT_ETH_LOCAL_ID_0_A else
-						local_id_MAC0_B when ethrx_port_id = PORT_ETH_LOCAL_ID_0_B else
-						local_id( 39 downto 32 ) when ethrx_port_id = PORT_ETH_LOCAL_ID_1 else
-						local_id( 31 downto 24 ) when ethrx_port_id = PORT_ETH_LOCAL_ID_2 else
-						local_id( 23 downto 16 ) when ethrx_port_id = PORT_ETH_LOCAL_ID_3 else
-						local_id( 15 downto 8 ) when ethrx_port_id = PORT_ETH_LOCAL_ID_4 else
-						local_id( 7 downto 0 ) when ethrx_port_id = PORT_ETH_LOCAL_ID_5 else
-						(others => 'Z');		
+--	ethrx_in_port <= 	local_id_MAC0_A when ethrx_port_id = PORT_ETH_LOCAL_ID_0_A else
+--						local_id_MAC0_B when ethrx_port_id = PORT_ETH_LOCAL_ID_0_B else
+--						local_id( 39 downto 32 ) when ethrx_port_id = PORT_ETH_LOCAL_ID_1 else
+--						local_id( 31 downto 24 ) when ethrx_port_id = PORT_ETH_LOCAL_ID_2 else
+--						local_id( 23 downto 16 ) when ethrx_port_id = PORT_ETH_LOCAL_ID_3 else
+--						local_id( 15 downto 8 ) when ethrx_port_id = PORT_ETH_LOCAL_ID_4 else
+--						local_id( 7 downto 0 ) when ethrx_port_id = PORT_ETH_LOCAL_ID_5 else
+--						(others => 'Z');		
 
 	u_wr_block : asyncwrite		 -- rxtask_wr_block must be synchronized with clk
 	port map(
@@ -534,22 +570,31 @@ begin
 	
 	txen <= txen_buf;
 	
-	db_tx_ce <= '1' when db_port_id(7 downto 4) = PORTS_DB_TX else '0';
-	eth_tx_ce <= '1' when ethtx_port_id(7 downto 4) = PORTS_ETH_TX else '0';
+--	db_tx_ce <= '1' when db_port_id(7 downto 4) = PORTS_DB_TX else '0';
+--	eth_tx_ce <= '1' when ethtx_port_id(7 downto 4) = PORTS_ETH_TX else '0';
+
+	db_tx_ce <= db_ce(conv_integer(PORTS_DB_TX));
+	eth_tx_ce <= ethtx_ce(conv_integer(PORTS_ETH_TX));
 
 	-- eth tx zcpsm
 	
 	u_ethtx_zcpsm : ethtx_zcpsm
 	port map(
 		reset 					=> reset,
-		clk 				=> zcpsm_clk,
+		clk 					=> zcpsm_clk,
 		port_id 				=> ethtx_port_id,
 		write_strobe 			=> ethtx_write_strobe,
 		out_port 				=> ethtx_out_port,
 		read_strobe 			=> ethtx_read_strobe,
 		in_port 				=> ethtx_in_port
 	);
-		
+	
+	u_ethtx_zcpsm_ce : zcpsmDecode
+	port map(
+		port_id_H	=> ethtx_port_id( 7 downto 4),
+		ce 			=> ethtx_ce
+	);	
+	
 	mo_Eth_Tx_HighPriority : Eth_Tx_HighPriority
 		port map(
 		reset				=> reset,
@@ -601,16 +646,18 @@ begin
 		);
 
 
-	ethtx_task_ce <= '1' when ethtx_port_id(7 downto 4) = PORTS_ETH_TX_TASK else '0';					
-	ethtx_in_port <= 	local_id_MAC0_Req when ethtx_port_id = PORT_ETH_LOCAL_ID_0_REQ else
-						local_id_MAC0_A when ethtx_port_id = PORT_ETH_LOCAL_ID_0_A else
-						local_id_MAC0_B when ethtx_port_id = PORT_ETH_LOCAL_ID_0_B else
-						local_id( 39 downto 32 ) when ethtx_port_id = PORT_ETH_LOCAL_ID_1 else
-						local_id( 31 downto 24 ) when ethtx_port_id = PORT_ETH_LOCAL_ID_2 else
-						local_id( 23 downto 16 ) when ethtx_port_id = PORT_ETH_LOCAL_ID_3 else
-						local_id( 15 downto 8 ) when ethtx_port_id = PORT_ETH_LOCAL_ID_4 else
-						local_id( 7 downto 0 ) when ethtx_port_id = PORT_ETH_LOCAL_ID_5 else
-						(others => 'Z');
+--	ethtx_task_ce <= '1' when ethtx_port_id(7 downto 4) = PORTS_ETH_TX_TASK else '0';					
+	ethtx_task_ce <= ethtx_ce(conv_integer(PORTS_ETH_TX_TASK));
+
+--	ethtx_in_port <= 	local_id_MAC0_Req when ethtx_port_id = PORT_ETH_LOCAL_ID_0_REQ else
+--						local_id_MAC0_A when ethtx_port_id = PORT_ETH_LOCAL_ID_0_A else
+--						local_id_MAC0_B when ethtx_port_id = PORT_ETH_LOCAL_ID_0_B else
+--						local_id( 39 downto 32 ) when ethtx_port_id = PORT_ETH_LOCAL_ID_1 else
+--						local_id( 31 downto 24 ) when ethtx_port_id = PORT_ETH_LOCAL_ID_2 else
+--						local_id( 23 downto 16 ) when ethtx_port_id = PORT_ETH_LOCAL_ID_3 else
+--						local_id( 15 downto 8 ) when ethtx_port_id = PORT_ETH_LOCAL_ID_4 else
+--						local_id( 7 downto 0 ) when ethtx_port_id = PORT_ETH_LOCAL_ID_5 else
+--						(others => 'Z');
 			
 	------------------------------------------------------------------------------
 	--	DB zcpsm
@@ -627,6 +674,11 @@ begin
 		in_port => db_in_port
 		);
 	
+	u_db_zcpsm_ce : zcpsmDecode
+	port map(
+		port_id_H	=> db_port_id( 7 downto 4),
+		ce 			=> db_ce
+	);
 	------------------------------------------------------------------------------
 	--	DEBUG & PROG
 	------------------------------------------------------------------------------
@@ -648,7 +700,8 @@ begin
 		zcpsm_in_port 			=> db_in_port
 		);
 	
-	db_debug_ce <= '1' when db_port_id(7 downto 4) = PORTS_DB_DEBUG else '0';
+--	db_debug_ce <= '1' when db_port_id(7 downto 4) = PORTS_DB_DEBUG else '0';
+	db_debug_ce <= db_ce(conv_integer(PORTS_DB_DEBUG));
 	
 	------------------------------------------------------------------------------
 	-- IO
@@ -665,13 +718,27 @@ begin
 	--	LOCAL ID
 	------------------------------------------------------------------------------
 	
-	db_in_port <= 	local_id_MAC0_A when db_port_id = PORT_DB_LOCAL_ID_0_A else
-					local_id_MAC0_B when db_port_id = PORT_DB_LOCAL_ID_0_B else
-					local_id( 39 downto 32 ) when db_port_id = PORT_DB_LOCAL_ID_1 else
-					local_id( 31 downto 24 ) when db_port_id = PORT_DB_LOCAL_ID_2 else
-					local_id( 23 downto 16 ) when db_port_id = PORT_DB_LOCAL_ID_3 else
-					local_id( 15 downto 8 ) when db_port_id = PORT_DB_LOCAL_ID_4 else
-					local_id( 7 downto 0 ) when db_port_id = PORT_DB_LOCAL_ID_5 else
-					(others => 'Z');
+--	db_in_port <= 	local_id_MAC0_A when db_port_id = PORT_DB_LOCAL_ID_0_A else
+--					local_id_MAC0_B when db_port_id = PORT_DB_LOCAL_ID_0_B else
+--					local_id( 39 downto 32 ) when db_port_id = PORT_DB_LOCAL_ID_1 else
+--					local_id( 31 downto 24 ) when db_port_id = PORT_DB_LOCAL_ID_2 else
+--					local_id( 23 downto 16 ) when db_port_id = PORT_DB_LOCAL_ID_3 else
+--					local_id( 15 downto 8 ) when db_port_id = PORT_DB_LOCAL_ID_4 else
+--					local_id( 7 downto 0 ) when db_port_id = PORT_DB_LOCAL_ID_5 else
+--					(others => 'Z');
+
+	u_macAddr : macAddrConfig 
+	port map(
+		ethtx_port_id		=> ethtx_port_id,
+		ethrx_port_id		=> ethrx_port_id,
+		db_port_id			=> db_port_id,
+		local_id_MAC0_Req	=> local_id_MAC0_Req,
+		local_id_MAC0_A		=> local_id_MAC0_A,
+		local_id_MAC0_B		=> local_id_MAC0_B,
+		local_id			=> local_id,
+		ethtx_in_port 		=> ethtx_in_port,
+		ethrx_in_port 		=> ethrx_in_port,
+		db_in_port	 		=> db_in_port
+	);
 	
 end arch_eth;

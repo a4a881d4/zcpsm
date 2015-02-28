@@ -3,16 +3,16 @@ use ieee.std_logic_1164.all;
 
 entity zcpsmDecode is
 	port (
-	port_id		: in std_logic_vector(7 downto 4);
+	port_id_H	: in std_logic_vector(3 downto 0);
 	ce 			: out std_logic_vector(15 downto 0)
 	);
 end zcpsmDecode;
 
 architecture behave of zcpsmDecode is
 begin
-	decode : process( port_id )
+	decode : process( port_id_H )
 	begin 
-		case port_id is
+		case port_id_H is
             when X"0" => ce <= X"0001";
             when X"1" => ce <= X"0002";
             when X"2" => ce <= X"0004";
