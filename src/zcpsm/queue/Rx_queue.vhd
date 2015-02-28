@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-entity ethrx_queue is
+entity Rx_queue is
 	generic(
 		HEAD_AWIDTH			:	natural		:=	5;
 		FIFO_AWIDTH			:	natural		:=	2;
@@ -28,7 +28,7 @@ entity ethrx_queue is
 		);
 end entity;
 
-architecture arch_ethrx_queue of ethrx_queue is
+architecture arch_Rx_queue of Rx_queue is
 	
 	component fifo_block
 		generic(
@@ -131,4 +131,4 @@ begin
 		fifo_empty => fifo_empty
 		);
 	
-end arch_ethrx_queue;
+end arch_Rx_queue;

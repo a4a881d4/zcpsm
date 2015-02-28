@@ -80,7 +80,7 @@ architecture arch_ethtx of g_ethtx is
 		);
 	end component;
 	
-	component ethtx_queue
+	component Tx_queue
 	generic(
 		HEAD_AWIDTH : NATURAL := 5;
 		FIFO_AWIDTH : NATURAL := 2;
@@ -226,7 +226,7 @@ begin
 		localtime => localtime
 		);
 	
-	u_db_queue : ethtx_queue
+	u_db_queue : Tx_queue
 	generic map(
 		HEAD_AWIDTH => HEAD_AWIDTH,
 		FIFO_AWIDTH => 0,
@@ -248,7 +248,7 @@ begin
 		zcpsm_in_port => db_in_port
 		);
 	
-	u_tx_queue : ethtx_queue
+	u_tx_queue : Tx_queue
 	generic map(
 		HEAD_AWIDTH => HEAD_AWIDTH,
 		FIFO_AWIDTH => FIFO_AWIDTH,

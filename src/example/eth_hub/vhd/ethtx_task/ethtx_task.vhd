@@ -44,7 +44,7 @@ entity ethtx_task is
 		TxFIFO_WAddr				: 	in std_logic_vector( TASKFIFO_BLOCK_AWIDTH - 1 downto 0 );
 		TxFIFO_WData				: 	in std_logic_vector( TASKFIFO_DWIDTH - 1 downto 0 );
 		TxFIFO_Full					: 	out	std_logic;
-		TxFIFO_Empty					:	out std_logic;
+		TxFIFO_Empty				:	out std_logic;
 		--	zcpsm
 		zcpsm_clk					:	in	std_logic;
 		zcpsm_ce					:	in	std_logic;

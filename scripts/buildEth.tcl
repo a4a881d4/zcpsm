@@ -1,3 +1,6 @@
+set ver_major 1
+set ver_minor 0
+
 proc buildip { top } {
 	set dir ../proj/$top
 	if [file exists $dir] {

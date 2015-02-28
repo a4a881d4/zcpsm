@@ -75,7 +75,7 @@ architecture arch_ethrx of g_ethrx is
 		buff_wdata : out std_logic_vector(31 downto 0));
 	end component;
 	
-	component ethrx_queue
+	component Rx_queue
 	generic(
 		HEAD_AWIDTH : NATURAL;
 		FIFO_AWIDTH : NATURAL;
@@ -241,7 +241,7 @@ begin
 		buff_wdata => buff_wdata
 		);
 	
-	u_db_queue : ethrx_queue
+	u_db_queue : Rx_queue
 	generic map(
 		HEAD_AWIDTH => HEAD_AWIDTH,
 		FIFO_AWIDTH => 1,
@@ -263,7 +263,7 @@ begin
 		zcpsm_in_port => db_in_port
 		);
 	
-	u_rx_queue : ethrx_queue
+	u_rx_queue : Rx_queue
 	generic map(
 		HEAD_AWIDTH => HEAD_AWIDTH,
 		FIFO_AWIDTH => FIFO_AWIDTH,
