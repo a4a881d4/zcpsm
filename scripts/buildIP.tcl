@@ -30,6 +30,8 @@ proc zcpsmInterface {} {
 
 }
 
+proc zcpsmISPInterface {} {}
+
 proc buildip { top } {
 	set dir ../proj/$top
 	if [file exists $dir] {
@@ -52,7 +54,7 @@ proc buildip { top } {
 	set_property vendor_display_name a4a881d4 [ipx::current_core]
 	set_property company_url http://github.com/a4a881d4/ringbus4xilinx [ipx::current_core]
 	set_property core_revision 1 [ipx::current_core]
-	zcpsmInterface 
+	${top}Interface 
 	ipx::create_xgui_files [ipx::current_core]
 	ipx::update_checksums [ipx::current_core]
 	ipx::save_core [ipx::current_core]
@@ -64,4 +66,6 @@ proc buildip { top } {
 }
 
 file mkdir ../lib
-buildip zcpsm
+#buildip zcpsm
+buildip zcpsmISP
+

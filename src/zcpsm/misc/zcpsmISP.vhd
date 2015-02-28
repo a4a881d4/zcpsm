@@ -12,7 +12,7 @@ use IEEE.STD_LOGIC_1164.all;
 
 entity zcpsmISP is
 	generic (
-		AWIDTH => 10,
+		AWIDTH	: natural := 10;
 		PROG	: string := "program.bit"
 	);
 	port(
