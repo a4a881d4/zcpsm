@@ -23,9 +23,9 @@ entity fifo_block is
 		wdata			:	in	std_logic_vector(DWIDTH - 1 downto 0);
 		
 		rd_block		:	in	std_logic;
-		rd_clk			:	in	std_logic;		 -- kcpsm_clk
-		raddr			:	in	std_logic_vector(BLOCK_AWIDTH - 1 downto 0);   -- 由KCPSM提供
-		rdata			:	out	std_logic_vector(DWIDTH - 1 downto 0);		   -- 提供给kcpsm
+		rd_clk			:	in	std_logic;		 -- zcpsm_clk
+		raddr			:	in	std_logic_vector(BLOCK_AWIDTH - 1 downto 0);   -- 由zcpsm提供
+		rdata			:	out	std_logic_vector(DWIDTH - 1 downto 0);		   -- 提供给zcpsm
 		
 		full			: 	out	std_logic;
 		empty			: 	out	std_logic

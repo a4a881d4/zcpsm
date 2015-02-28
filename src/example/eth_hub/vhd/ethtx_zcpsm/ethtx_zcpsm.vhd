@@ -1,14 +1,14 @@
 ---------------------------------------------------------------------------------------------------
 --
--- Title       : ethrx_kcpsm
+-- Title       : ethtx_zcpsm
 -- Design      : eth_new
 -- Author      : a4a881d4
 -- Company     : a4a881d4
 --
 ---------------------------------------------------------------------------------------------------
 --
--- File        : ethrx_kcpsm.vhd
--- Generated   : Sun Sep  3 10:28:09 2006
+-- File        : ethtx_zcpsm.vhd
+-- Generated   : Tue Aug 29 22:34:33 2006
 -- From        : interface description file
 -- By          : Itf2Vhdl ver. 1.20
 --
@@ -21,7 +21,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 
-entity ethrx_zcpsm is
+entity ethtx_zcpsm is 
 	port(
 		reset				:	in	std_logic;
 		clk					:	in	std_logic;
@@ -33,11 +33,11 @@ entity ethrx_zcpsm is
 		in_port				:	in	std_logic_vector(7 downto 0)
 		
 		);
-end ethrx_zcpsm;
+end ethtx_zcpsm;
 
 --}} End of automatically maintained section
 
-architecture behavior of ethrx_zcpsm is
+architecture behavior of ethtx_zcpsm is
 
 	component zcpsm
 		Port (     
@@ -53,7 +53,7 @@ architecture behavior of ethrx_zcpsm is
 			clk 		:	in std_logic);
 	end component;
 
-	component ethrxrom_romonly
+	component ethtxrom_romonly
 	port(
 		addrb : in std_logic_vector(11 downto 0);
 		clkb : in std_logic;
@@ -63,15 +63,9 @@ architecture behavior of ethrx_zcpsm is
 	signal address : std_logic_vector(11 downto 0);
 	signal instruction : std_logic_vector(17 downto 0);	 
 
-	signal kcpsm_reset 		: std_logic;
-	signal kcpsm_wren 		: std_logic;
-	signal kcpsm_addr 		: std_logic_vector(9 downto 0);
-	signal kcpsm_wdata 		: std_logic_vector(15 downto 0);
-	signal kcpsm_rdata 		: std_logic_vector(15 downto 0);	
-
 begin
 
-	u_rx_kcpsm : zcpsm
+	u_tx_zcpsm : zcpsm
 	port map(
 		address => address,
 		instruction => instruction,
@@ -81,11 +75,11 @@ begin
 		read_strobe => read_strobe,
 		in_port => in_port,
 		interrupt => '0',
-		reset => kcpsm_reset,
+		reset => reset,
 		clk => clk
 		);
 
-	u_rx_rom : ethrxrom_romonly
+	u_tx_rom : ethtxrom_romonly
 	port map(
 		addrb => address,
 		clkb => clk,

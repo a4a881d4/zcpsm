@@ -11,7 +11,7 @@ entity ethrx is
 		);
 	port(
 		clk					:	in	std_logic;
-		kcpsm_clk			:	in	std_logic;
+		zcpsm_clk			:	in	std_logic;
 		reset				:	in	std_logic;
 		
 		rxclk				:	in	std_logic;
@@ -87,13 +87,13 @@ architecture arch_ethrx of ethrx is
 		head_waddr : in std_logic_vector((HEAD_AWIDTH-1) downto 0);
 		head_wdata : in std_logic_vector(7 downto 0);
 		head_wr_block : in std_logic;
-		kcpsm_clk : in std_logic;
-		kcpsm_ce : in std_logic;
-		kcpsm_port_id : in std_logic_vector(3 downto 0);
-		kcpsm_write_strobe : in std_logic;
-		kcpsm_out_port : in std_logic_vector(7 downto 0);
-		kcpsm_read_strobe : in std_logic;
-		kcpsm_in_port : out std_logic_vector(7 downto 0));
+		zcpsm_clk : in std_logic;
+		zcpsm_ce : in std_logic;
+		zcpsm_port_id : in std_logic_vector(3 downto 0);
+		zcpsm_write_strobe : in std_logic;
+		zcpsm_out_port : in std_logic_vector(7 downto 0);
+		zcpsm_read_strobe : in std_logic;
+		zcpsm_in_port : out std_logic_vector(7 downto 0));
 	end component;
 	
 	component blockdram
@@ -111,20 +111,20 @@ architecture arch_ethrx of ethrx is
 		dob : out std_logic_vector((Dwidth-1) downto 0));
 	end component;
 	
-	component kcpsm2dma
+	component zcpsm2dma
 	generic(
 	 	RAM_AWIDTH : NATURAL
 	);
 	port(
 		clk : in std_logic;
 		reset : in std_logic;
-		kcpsm_clk : in std_logic;
-		kcpsm_ce : in std_logic;
-		kcpsm_port_id : in std_logic_vector(3 downto 0);
-		kcpsm_write_strobe : in std_logic;
-		kcpsm_out_port : in std_logic_vector(7 downto 0);
-		kcpsm_read_strobe : in std_logic;
-		kcpsm_in_port : out std_logic_vector(7 downto 0);  
+		zcpsm_clk : in std_logic;
+		zcpsm_ce : in std_logic;
+		zcpsm_port_id : in std_logic_vector(3 downto 0);
+		zcpsm_write_strobe : in std_logic;
+		zcpsm_out_port : in std_logic_vector(7 downto 0);
+		zcpsm_read_strobe : in std_logic;
+		zcpsm_in_port : out std_logic_vector(7 downto 0);  
 		
 		lastframe_flag		:	out std_logic; 
 		
@@ -251,13 +251,13 @@ begin
 		head_waddr => head_waddr,
 		head_wdata => head_wdata,
 		head_wr_block => head_wr_block,
-		kcpsm_clk => kcpsm_clk,
-		kcpsm_ce => db_ce,
-		kcpsm_port_id => db_port_id,
-		kcpsm_write_strobe => db_write_strobe,
-		kcpsm_out_port => db_out_port,
-		kcpsm_read_strobe => db_read_strobe,
-		kcpsm_in_port => db_in_port
+		zcpsm_clk => zcpsm_clk,
+		zcpsm_ce => db_ce,
+		zcpsm_port_id => db_port_id,
+		zcpsm_write_strobe => db_write_strobe,
+		zcpsm_out_port => db_out_port,
+		zcpsm_read_strobe => db_read_strobe,
+		zcpsm_in_port => db_in_port
 		);
 	
 	u_rx_queue : ethrx_queue
@@ -273,13 +273,13 @@ begin
 		head_waddr => head_waddr,
 		head_wdata => head_wdata,
 		head_wr_block => head_wr_block,
-		kcpsm_clk => kcpsm_clk,
-		kcpsm_ce => eth_ce,
-		kcpsm_port_id => eth_port_id,
-		kcpsm_write_strobe => eth_write_strobe,
-		kcpsm_out_port => eth_out_port,
-		kcpsm_read_strobe => eth_read_strobe,
-		kcpsm_in_port => eth_in_port
+		zcpsm_clk => zcpsm_clk,
+		zcpsm_ce => eth_ce,
+		zcpsm_port_id => eth_port_id,
+		zcpsm_write_strobe => eth_write_strobe,
+		zcpsm_out_port => eth_out_port,
+		zcpsm_read_strobe => eth_read_strobe,
+		zcpsm_in_port => eth_in_port
 		);
 	
 	u_rx_buffer : blockdram
@@ -324,20 +324,20 @@ begin
 		wdata => dma_wdata
 		);
 	
-	u_kcpsm2dma : kcpsm2dma
+	u_zcpsm2dma : zcpsm2dma
 	generic map (
 		RAM_AWIDTH => RAM_AWIDTH
 	)
 	port map(
 		clk => clk,
 		reset => reset,
-		kcpsm_clk => kcpsm_clk,
-		kcpsm_ce => eth_dma_ce,
-		kcpsm_port_id => eth_port_id,
-		kcpsm_write_strobe => eth_write_strobe,
-		kcpsm_out_port => eth_out_port,
-		kcpsm_read_strobe => eth_read_strobe,
-		kcpsm_in_port => eth_in_port, 
+		zcpsm_clk => zcpsm_clk,
+		zcpsm_ce => eth_dma_ce,
+		zcpsm_port_id => eth_port_id,
+		zcpsm_write_strobe => eth_write_strobe,
+		zcpsm_out_port => eth_out_port,
+		zcpsm_read_strobe => eth_read_strobe,
+		zcpsm_in_port => eth_in_port, 
 		
 		lastframe_flag		=>	lastframe_flag,
 		

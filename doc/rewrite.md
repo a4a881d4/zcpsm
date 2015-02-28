@@ -16,6 +16,16 @@
 2. g_ethrx 
 3. ethrx_task
 4. debug_io
+5. ethtx
+6. ethrx
+
+## kcpsm2dma -> zcpsm2dma
+### stage1
+将kcpsm换成zcpsm
+
+### stage2
+1. 读写模式可以改变
+2. 不在使用asyncwrite接口
 
 
 

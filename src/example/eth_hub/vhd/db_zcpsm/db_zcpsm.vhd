@@ -42,7 +42,7 @@ architecture struct of db_zcpsm is
 	
 begin
 
-	u_kcpsm : zcpsm
+	u_zcpsm : zcpsm
 	port map(
 		address => address,
 		instruction => instruction,

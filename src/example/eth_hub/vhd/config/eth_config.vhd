@@ -29,8 +29,8 @@ package eth_config is
 --	constant RAM_RD_CYCLE			:	natural		:=	8;
 --	constant RAM_RD_DELAY			:	natural		:=	9;
 	
-	constant ETHRX_KCPSM_ID			:	std_logic_vector(3 downto 0)	:=	X"0";  
-	constant ETHTX_KCPSM_ID		   	:	std_logic_vector(3 downto 0)  :=  X"1";
+	constant ETHRX_ZCPSM_ID			:	std_logic_vector(3 downto 0)	:=	X"0";  
+	constant ETHTX_ZCPSM_ID		   	:	std_logic_vector(3 downto 0)  :=  X"1";
 	
 	constant PORTS_ETH_TX			:	std_logic_vector(3 downto 0)	:=	X"0"; 
 	constant PORTS_ETH_TX_TASK		:	std_logic_vector(3 downto 0)  :=  X"1";

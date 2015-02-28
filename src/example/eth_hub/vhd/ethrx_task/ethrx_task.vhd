@@ -46,14 +46,14 @@ entity ethrx_task is
 		
 		fifo_wr_block				:	in	std_logic;
 		
-		--	KCPSM
-		kcpsm_clk					:	in	std_logic;
-		kcpsm_ce					:	in	std_logic;
-		kcpsm_port_id				:	in	std_logic_vector(3 downto 0);
-		kcpsm_write_strobe			:	in	std_logic;
-		kcpsm_out_port				:	in	std_logic_vector(7 downto 0);
-		kcpsm_read_strobe			:	in	std_logic;
-		kcpsm_in_port				:	out	std_logic_vector(7 downto 0)
+		--	zcpsm
+		zcpsm_clk					:	in	std_logic;
+		zcpsm_ce					:	in	std_logic;
+		zcpsm_port_id				:	in	std_logic_vector(3 downto 0);
+		zcpsm_write_strobe			:	in	std_logic;
+		zcpsm_out_port				:	in	std_logic_vector(7 downto 0);
+		zcpsm_read_strobe			:	in	std_logic;
+		zcpsm_in_port				:	out	std_logic_vector(7 downto 0)
 		);
 end ethrx_task;
 
@@ -87,7 +87,7 @@ architecture arch_ethrx_task of ethrx_task is
 			);
 	end component;
 	
-	component kcpsm2fifo
+	component zcpsm2fifo
 		generic(
 			BLOCK_AWIDTH 			: INTEGER;
 			DWIDTH 					: INTEGER
@@ -95,13 +95,13 @@ architecture arch_ethrx_task of ethrx_task is
 		port(
 			clk 					: in std_logic;
 			reset 					: in std_logic;
-			kcpsm_clk 				: in std_logic;
-			kcpsm_ce 				: in std_logic;
-			kcpsm_port_id 			: in std_logic_vector(3 downto 0);
-			kcpsm_write_strobe 		: in std_logic;
-			kcpsm_out_port 			: in std_logic_vector(7 downto 0);
-			kcpsm_read_strobe 		: in std_logic;
-			kcpsm_in_port 			: out std_logic_vector(7 downto 0);
+			zcpsm_clk 				: in std_logic;
+			zcpsm_ce 				: in std_logic;
+			zcpsm_port_id 			: in std_logic_vector(3 downto 0);
+			zcpsm_write_strobe 		: in std_logic;
+			zcpsm_out_port 			: in std_logic_vector(7 downto 0);
+			zcpsm_read_strobe 		: in std_logic;
+			zcpsm_in_port 			: out std_logic_vector(7 downto 0);
 			fifo_wr_block 			: out std_logic;
 			fifo_wren 				: out std_logic;
 			fifo_waddr 				: out std_logic_vector((BLOCK_AWIDTH-1) downto 0);
@@ -137,7 +137,7 @@ begin
 		reset 						=> reset,
 		clr	 						=> '0',
 		wr_block 					=> fifo_rxtask_wr_block,
-		wr_clk 						=> kcpsm_clk,
+		wr_clk 						=> zcpsm_clk,
 		wren 						=> fifo_wren,
 		waddr 						=> fifo_waddr,
 		wdata 						=> fifo_wdata,
@@ -149,7 +149,7 @@ begin
 		full 						=> fifo_full
 		);
 	
-	u_rx_kcpsm_task : kcpsm2fifo
+	u_rx_zcpsm_task : zcpsm2fifo
 	generic map(
 		BLOCK_AWIDTH 				=> TASKFIFO_BLOCK_AWIDTH,
 		DWIDTH 						=> TASKFIFO_DWIDTH
@@ -157,13 +157,13 @@ begin
 	port map(
 		clk 						=> RxFIFO_R_Clk,
 		reset 						=> reset,
-		kcpsm_clk 					=> kcpsm_clk,
-		kcpsm_ce 					=> kcpsm_ce,
-		kcpsm_port_id 				=> kcpsm_port_id,
-		kcpsm_write_strobe 			=> kcpsm_write_strobe,
-		kcpsm_out_port 				=> kcpsm_out_port,
-		kcpsm_read_strobe 			=> kcpsm_read_strobe,
-		kcpsm_in_port 				=> kcpsm_in_port,
+		zcpsm_clk 					=> zcpsm_clk,
+		zcpsm_ce 					=> zcpsm_ce,
+		zcpsm_port_id 				=> zcpsm_port_id,
+		zcpsm_write_strobe 			=> zcpsm_write_strobe,
+		zcpsm_out_port 				=> zcpsm_out_port,
+		zcpsm_read_strobe 			=> zcpsm_read_strobe,
+		zcpsm_in_port 				=> zcpsm_in_port,
 --		fifo_wr_block 				=> open,		
 		fifo_wr_block 				=> fifo_db_wr_block,
 		fifo_wren 					=> fifo_wren,

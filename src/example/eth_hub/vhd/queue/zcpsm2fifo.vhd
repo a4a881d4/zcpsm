@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-entity kcpsm2fifo is
+entity zcpsm2fifo is
 	generic(
 		BLOCK_AWIDTH		:	integer;
 		DWIDTH				:	integer
@@ -12,13 +12,13 @@ entity kcpsm2fifo is
 		clk					:	in	std_logic;
 		reset				:	in	std_logic;
 		
-		kcpsm_clk			:	in	std_logic;
-		kcpsm_ce			:	in	std_logic;
-		kcpsm_port_id		:	in	std_logic_vector(3 downto 0);
-		kcpsm_write_strobe	:	in	std_logic;
-		kcpsm_out_port		:	in	std_logic_vector(7 downto 0);
-		kcpsm_read_strobe	:	in	std_logic;
-		kcpsm_in_port		:	out	std_logic_vector(7 downto 0);
+		zcpsm_clk			:	in	std_logic;
+		zcpsm_ce			:	in	std_logic;
+		zcpsm_port_id		:	in	std_logic_vector(3 downto 0);
+		zcpsm_write_strobe	:	in	std_logic;
+		zcpsm_out_port		:	in	std_logic_vector(7 downto 0);
+		zcpsm_read_strobe	:	in	std_logic;
+		zcpsm_in_port		:	out	std_logic_vector(7 downto 0);
 		
 		fifo_wr_block		:	out	std_logic;	
 		fifo_wren			:	out	std_logic;
@@ -29,7 +29,7 @@ entity kcpsm2fifo is
 		);
 end entity;
 
-architecture behave of kcpsm2fifo is
+architecture behave of zcpsm2fifo is
 
 	component asyncwrite
 	port(
@@ -43,9 +43,9 @@ architecture behave of kcpsm2fifo is
 		flag : out std_logic);
 	end component;
 
-	signal kcpsm_we			:	std_logic;
-	signal kcpsm_re			:	std_logic;
-	signal kcpsm_addr		:	std_logic_vector(3 downto 0);
+	signal zcpsm_we			:	std_logic;
+	signal zcpsm_re			:	std_logic;
+	signal zcpsm_addr		:	std_logic_vector(3 downto 0);
 	signal wr_block_en		:	std_logic;
 	signal fifo_waddr_reg	:	std_logic_vector(BLOCK_AWIDTH - 1 downto 0);
 --	signal flag_LastFrame	:   std_logic;
@@ -58,17 +58,17 @@ architecture behave of kcpsm2fifo is
 	
 begin
 	
-	kcpsm_we <= kcpsm_ce and kcpsm_write_strobe;
-	kcpsm_re <= kcpsm_ce and kcpsm_read_strobe;
-	kcpsm_addr <= '0' & kcpsm_port_id(3 downto 1);
+	zcpsm_we <= zcpsm_ce and zcpsm_write_strobe;
+	zcpsm_re <= zcpsm_ce and zcpsm_read_strobe;
+	zcpsm_addr <= '0' & zcpsm_port_id(3 downto 1);
 	
-	kcpsm_in_port <= "000000" & fifo_empty & fifo_full when kcpsm_ce = '1' and kcpsm_addr = PORT_QUEUE_STATUS	  else (others => 'Z');
---	flag_LastFrame <= '1' when kcpsm_ce = '1' and kcpsm_addr = PORT_LAST_FRAME else '0';
+	zcpsm_in_port <= "000000" & fifo_empty & fifo_full when zcpsm_ce = '1' and zcpsm_addr = PORT_QUEUE_STATUS	  else (others => 'Z');
+--	flag_LastFrame <= '1' when zcpsm_ce = '1' and zcpsm_addr = PORT_LAST_FRAME else '0';
 		
 	u_wr_block : asyncwrite
 	port map(
 		reset => reset,
-		async_clk => kcpsm_clk,
+		async_clk => zcpsm_clk,
 		sync_clk => clk,
 		async_wren => wr_block_en,
 		trigger => '1',
@@ -77,23 +77,23 @@ begin
 		flag => open
 		);
 	
-	wr_block_en <= '1' when kcpsm_we = '1' and kcpsm_addr = PORT_WR_BLOCK else '0';
+	wr_block_en <= '1' when zcpsm_we = '1' and zcpsm_addr = PORT_WR_BLOCK else '0';
 	
-	process(kcpsm_clk, reset)
+	process(zcpsm_clk, reset)
 	begin
 		if reset = '1' then
 			fifo_waddr_reg <= (others => '0');
-		elsif rising_edge(kcpsm_clk) then
-			if kcpsm_we = '1' and kcpsm_addr = PORT_IO_ADDR then
-				fifo_waddr_reg <= kcpsm_out_port(BLOCK_AWIDTH - 1 downto 0);
-			elsif kcpsm_we = '1' and kcpsm_addr = PORT_IO_DATA then
+		elsif rising_edge(zcpsm_clk) then
+			if zcpsm_we = '1' and zcpsm_addr = PORT_IO_ADDR then
+				fifo_waddr_reg <= zcpsm_out_port(BLOCK_AWIDTH - 1 downto 0);
+			elsif zcpsm_we = '1' and zcpsm_addr = PORT_IO_DATA then
 				fifo_waddr_reg <= fifo_waddr_reg + 1;
 			end if;
 		end if;
 	end process;
 	
-	fifo_wren <= '1' when kcpsm_we = '1' and kcpsm_addr = PORT_IO_DATA else '0';
+	fifo_wren <= '1' when zcpsm_we = '1' and zcpsm_addr = PORT_IO_DATA else '0';
 	fifo_waddr <= fifo_waddr_reg;
-	fifo_wdata <= kcpsm_out_port;
+	fifo_wdata <= zcpsm_out_port;
 	
 end behave;

@@ -23,7 +23,7 @@ entity eth is
 		
 		clk				:	in	std_logic;
 		reset			:	in	std_logic;
-		kcpsm_clk		:	in	std_logic;	
+		zcpsm_clk		:	in	std_logic;	
 		
 		TxFIFO_W_Clk	: 	in std_logic;
 		TxFIFO_Clr		: 	in std_logic;
@@ -93,7 +93,7 @@ architecture arch_eth of eth is
 		);
 	port(
 		clk : in std_logic;
-		kcpsm_clk : in std_logic;
+		zcpsm_clk : in std_logic;
 		reset : in std_logic;
 		rxclk : in std_logic;
 		rxd : in std_logic_vector(3 downto 0);
@@ -159,21 +159,21 @@ architecture arch_eth of eth is
 			RxFIFO_Empty				: 	out	std_logic;
 			
 			fifo_wr_block				:	in	std_logic;
-			--	KCPSM
-			kcpsm_clk					:	in	std_logic;
-			kcpsm_ce					:	in	std_logic;
-			kcpsm_port_id				:	in	std_logic_vector(3 downto 0);
-			kcpsm_write_strobe			:	in	std_logic;
-			kcpsm_out_port				:	in	std_logic_vector(7 downto 0);
-			kcpsm_read_strobe			:	in	std_logic;
-			kcpsm_in_port				:	out	std_logic_vector(7 downto 0)
+			--	zcpsm
+			zcpsm_clk					:	in	std_logic;
+			zcpsm_ce					:	in	std_logic;
+			zcpsm_port_id				:	in	std_logic_vector(3 downto 0);
+			zcpsm_write_strobe			:	in	std_logic;
+			zcpsm_out_port				:	in	std_logic_vector(7 downto 0);
+			zcpsm_read_strobe			:	in	std_logic;
+			zcpsm_in_port				:	out	std_logic_vector(7 downto 0)
 			);
 	end component;	 
 	
 	component dma2rxtask 
 		port(			
 			reset			:	in	std_logic;
-			kcpsm_clk		:	in	std_logic;
+			zcpsm_clk		:	in	std_logic;
 			busy			:	in std_logic;
 			lastframe		:	in	std_logic;
 			rxtask_wr_block	:	out	std_logic
@@ -204,7 +204,7 @@ architecture arch_eth of eth is
 		);
 	port(
 		clk 				: in std_logic;
-		kcpsm_clk 			: in std_logic;
+		zcpsm_clk 			: in std_logic;
 		reset 				: in std_logic;
 		txclk 				: in std_logic;
 		txd 				: out std_logic_vector(3 downto 0);
@@ -263,14 +263,14 @@ architecture arch_eth of eth is
 		TxFIFO_WData				: 	in std_logic_vector( TASKFIFO_DWIDTH - 1 downto 0 );
 		TxFIFO_Full					: 	out	std_logic;
 		TxFIFO_Empty				:	out std_logic;
-		--	KCPSM
-		kcpsm_clk					:	in	std_logic;
-		kcpsm_ce					:	in	std_logic;
-		kcpsm_port_id				:	in	std_logic_vector(3 downto 0);
-		kcpsm_write_strobe			:	in	std_logic;
-		kcpsm_out_port				:	in	std_logic_vector(7 downto 0);
-		kcpsm_read_strobe			:	in	std_logic;
-		kcpsm_in_port				:	out	std_logic_vector(7 downto 0)
+		--	zcpsm
+		zcpsm_clk					:	in	std_logic;
+		zcpsm_ce					:	in	std_logic;
+		zcpsm_port_id				:	in	std_logic_vector(3 downto 0);
+		zcpsm_write_strobe			:	in	std_logic;
+		zcpsm_out_port				:	in	std_logic_vector(7 downto 0);
+		zcpsm_read_strobe			:	in	std_logic;
+		zcpsm_in_port				:	out	std_logic_vector(7 downto 0)
 		);
 	end component;
 	
@@ -278,7 +278,7 @@ architecture arch_eth of eth is
 		port(
 		reset				: in std_logic;
 		clk					: in std_logic;
-		clk_KCPSM			: in std_logic;
+		clk_zcpsm			: in std_logic;
 		
 		s_Tx_Req			: in std_logic;
 		m48_Tx_Req_DesMac	: in std_logic_vector( 47 downto 0 );
@@ -304,7 +304,7 @@ architecture arch_eth of eth is
 		in_port : in std_logic_vector(7 downto 0));
 	end component;
  	
-	component debug_io
+	component zcpsmIO2bus16
 	port(
 		reset : in std_logic;
 		debug_port_id : out std_logic_vector(15 downto 0);
@@ -312,13 +312,13 @@ architecture arch_eth of eth is
 		debug_out_port : out std_logic_vector(15 downto 0);
 		debug_read_strobe : out std_logic;
 		debug_in_port : in std_logic_vector(15 downto 0);
-		kcpsm_clk : in std_logic;
-		kcpsm_ce : in std_logic;
-		kcpsm_port_id : in std_logic_vector(3 downto 0);
-		kcpsm_write_strobe : in std_logic;
-		kcpsm_out_port : in std_logic_vector(7 downto 0);
-		kcpsm_read_strobe : in std_logic;
-		kcpsm_in_port : out std_logic_vector(7 downto 0));
+		zcpsm_clk : in std_logic;
+		zcpsm_ce : in std_logic;
+		zcpsm_port_id : in std_logic_vector(3 downto 0);
+		zcpsm_write_strobe : in std_logic;
+		zcpsm_out_port : in std_logic_vector(7 downto 0);
+		zcpsm_read_strobe : in std_logic;
+		zcpsm_in_port : out std_logic_vector(7 downto 0));
 	end component;
 
 	signal ethrx_port_id			:	std_logic_vector(7 downto 0);
@@ -383,7 +383,7 @@ begin
 		)
 	port map(
 		clk => clk,
-		kcpsm_clk => kcpsm_clk,
+		zcpsm_clk => zcpsm_clk,
 		reset => reset,
 		rxclk => rxclk,
 		rxd => rxd,
@@ -421,7 +421,7 @@ begin
 	u_ethrx_zcpsm : ethrx_zcpsm
 	port map(
 		reset 					=> reset,
-		clk 				=> kcpsm_clk,
+		clk 				=> zcpsm_clk,
 		port_id 				=> ethrx_port_id,
 		write_strobe 			=> ethrx_write_strobe,
 		out_port 				=> ethrx_out_port,
@@ -451,14 +451,14 @@ begin
 		RxFIFO_Empty				=> 	RxFIFO_Empty,
 		
 		fifo_wr_block				=>	rxtask_wr_block,
-		--	KCPSM
-		kcpsm_clk					=>	kcpsm_clk,
-		kcpsm_ce					=>	ethrx_task_ce,
-		kcpsm_port_id				=>	ethrx_port_id(3 downto 0),
-		kcpsm_write_strobe			=>	ethrx_write_strobe,
-		kcpsm_out_port				=>	ethrx_out_port,
-		kcpsm_read_strobe			=>	ethrx_read_strobe,
-		kcpsm_in_port				=>	ethrx_in_port
+		--	zcpsm
+		zcpsm_clk					=>	zcpsm_clk,
+		zcpsm_ce					=>	ethrx_task_ce,
+		zcpsm_port_id				=>	ethrx_port_id(3 downto 0),
+		zcpsm_write_strobe			=>	ethrx_write_strobe,
+		zcpsm_out_port				=>	ethrx_out_port,
+		zcpsm_read_strobe			=>	ethrx_read_strobe,
+		zcpsm_in_port				=>	ethrx_in_port
 		);
 
 	ethrx_task_ce <= '1' when ethrx_port_id(7 downto 4) = PORTS_ETH_RX_TASK else '0'; 
@@ -467,7 +467,7 @@ begin
 	u_dma2rxtask: dma2rxtask  
 		port map(			
 			reset					=>	reset,
-			kcpsm_clk				=>	kcpsm_clk,
+			zcpsm_clk				=>	zcpsm_clk,
 			busy					=>	ethrx_busy,
 			lastframe				=>	lastframe_flag,
 			rxtask_wr_block			=>	rxtask_wr_block_Reg
@@ -486,7 +486,7 @@ begin
 	u_wr_block : asyncwrite		 -- rxtask_wr_block must be synchronized with clk
 	port map(
 		reset => reset,
-		async_clk => kcpsm_clk,
+		async_clk => zcpsm_clk,
 		sync_clk => clk,
 		async_wren => rxtask_wr_block_Reg,
 		trigger => '1',
@@ -509,7 +509,7 @@ begin
 		)
 	port map(
 		clk => clk,
-		kcpsm_clk => kcpsm_clk,
+		zcpsm_clk => zcpsm_clk,
 		reset => reset,
 		txclk => txclk,
 		txd => txd,
@@ -537,12 +537,12 @@ begin
 	db_tx_ce <= '1' when db_port_id(7 downto 4) = PORTS_DB_TX else '0';
 	eth_tx_ce <= '1' when ethtx_port_id(7 downto 4) = PORTS_ETH_TX else '0';
 
-	-- eth tx kcpsm
+	-- eth tx zcpsm
 	
 	u_ethtx_zcpsm : ethtx_zcpsm
 	port map(
 		reset 					=> reset,
-		clk 				=> kcpsm_clk,
+		clk 				=> zcpsm_clk,
 		port_id 				=> ethtx_port_id,
 		write_strobe 			=> ethtx_write_strobe,
 		out_port 				=> ethtx_out_port,
@@ -554,7 +554,7 @@ begin
 		port map(
 		reset				=> reset,
 		clk					=> clk,
-		clk_KCPSM			=> kcpsm_clk,
+		clk_zcpsm			=> zcpsm_clk,
 		
 		s_Tx_Req			=> s_HighPri_Tx_Req,
 		m48_Tx_Req_DesMac	=> m48_HighPri_Tx_Req_DesMac,
@@ -590,14 +590,14 @@ begin
 --		TxFIFO_Empty			=>	TxFIFO_Empty,
 		TxFIFO_Empty			=>	open,
 
-		--	KCPSM
-		kcpsm_clk				=>	kcpsm_clk,
-		kcpsm_ce				=>	ethtx_task_ce,
-		kcpsm_port_id			=>	ethtx_port_id(3 downto 0),
-		kcpsm_write_strobe		=>	ethtx_write_strobe,
-		kcpsm_out_port			=>	ethtx_out_port,
-		kcpsm_read_strobe		=>	ethtx_read_strobe,
-		kcpsm_in_port			=>	ethtx_in_port
+		--	zcpsm
+		zcpsm_clk				=>	zcpsm_clk,
+		zcpsm_ce				=>	ethtx_task_ce,
+		zcpsm_port_id			=>	ethtx_port_id(3 downto 0),
+		zcpsm_write_strobe		=>	ethtx_write_strobe,
+		zcpsm_out_port			=>	ethtx_out_port,
+		zcpsm_read_strobe		=>	ethtx_read_strobe,
+		zcpsm_in_port			=>	ethtx_in_port
 		);
 
 
@@ -613,13 +613,13 @@ begin
 						(others => 'Z');
 			
 	------------------------------------------------------------------------------
-	--	DB KCPSM
+	--	DB zcpsm
 	------------------------------------------------------------------------------
 	
 	u_db_zcpsm : db_zcpsm
 	port map(
 		reset => reset,
-		clk => kcpsm_clk,
+		clk => zcpsm_clk,
 		port_id => db_port_id,
 		write_strobe => db_write_strobe,
 		out_port => db_out_port,
@@ -631,21 +631,21 @@ begin
 	--	DEBUG & PROG
 	------------------------------------------------------------------------------
 	
-	u_debug_io : debug_io
+	u_zcpsmIO2bus16 : zcpsmIO2bus16
 	port map(
 		reset 					=> reset,
-		kcpsm_clk 				=> kcpsm_clk,
+		zcpsm_clk 				=> zcpsm_clk,
 		debug_port_id 			=> debug_port_id,
 		debug_write_strobe 		=> debug_write_strobe,
 		debug_out_port 			=> debug_out_port,
 		debug_read_strobe 		=> debug_read_strobe,
 		debug_in_port 			=> debug_in_port,
-		kcpsm_ce 				=> db_debug_ce,
-		kcpsm_port_id 			=> db_port_id(3 downto 0),
-		kcpsm_write_strobe 		=> db_write_strobe,
-		kcpsm_out_port	 		=> db_out_port,
-		kcpsm_read_strobe 		=> db_read_strobe,
-		kcpsm_in_port 			=> db_in_port
+		zcpsm_ce 				=> db_debug_ce,
+		zcpsm_port_id 			=> db_port_id(3 downto 0),
+		zcpsm_write_strobe 		=> db_write_strobe,
+		zcpsm_out_port	 		=> db_out_port,
+		zcpsm_read_strobe 		=> db_read_strobe,
+		zcpsm_in_port 			=> db_in_port
 		);
 	
 	db_debug_ce <= '1' when db_port_id(7 downto 4) = PORTS_DB_DEBUG else '0';

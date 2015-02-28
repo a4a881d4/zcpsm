@@ -28,7 +28,7 @@ use IEEE.STD_LOGIC_1164.all;
 entity dma2rxtask is 
 	port(			
 		reset			:	in	std_logic;
-		kcpsm_clk		:	in	std_logic;
+		zcpsm_clk		:	in	std_logic;
 		busy			:	in std_logic;
 		lastframe		:	in	std_logic;
 		rxtask_wr_block	:	out	std_logic
@@ -49,11 +49,11 @@ begin
 
 	rxtask_wr_block <=  task_wr_block_reg;
 	
-	process(reset, kcpsm_clk)
+	process(reset, zcpsm_clk)
 	begin
 		if reset = '1' then
 			busy_flag <= '0';
-		elsif rising_edge(kcpsm_clk) then
+		elsif rising_edge(zcpsm_clk) then
 			if busy = '1' then
 				busy_flag <= '1';
 			else
@@ -62,11 +62,11 @@ begin
 		end if;	
 	end process;
 	
-	process(reset, kcpsm_clk)
+	process(reset, zcpsm_clk)
 	begin
 		if reset = '1' then
 			lastframe_flag <= '0';
-		elsif rising_edge(kcpsm_clk) then
+		elsif rising_edge(zcpsm_clk) then
 			if lastframe = '1' then
 				lastframe_flag <= '1';
 			elsif lastframe_flag = '1' and busy = '0' then
@@ -75,11 +75,11 @@ begin
 		end if;	  
 	end process;					
 	
-	process(reset, kcpsm_clk)
+	process(reset, zcpsm_clk)
 	begin
 		if reset = '1' then
 			task_wr_block_reg <= '0';
-		elsif rising_edge(kcpsm_clk) then
+		elsif rising_edge(zcpsm_clk) then
 			if lastframe_flag = '1' and busy = '0' then
 --				if busy = '0' then
 					task_wr_block_reg <= '1';

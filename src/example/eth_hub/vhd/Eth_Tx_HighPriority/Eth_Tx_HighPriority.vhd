@@ -24,7 +24,7 @@ entity Eth_Tx_HighPriority is
 	port(
 	reset				: in std_logic;
 	clk					: in std_logic;
-	clk_KCPSM			: in std_logic;
+	clk_zcpsm			: in std_logic;
 	
 	s_Tx_Req			: in std_logic;
 	m48_Tx_Req_DesMac	: in std_logic_vector( 47 downto 0 );
@@ -41,7 +41,7 @@ end Eth_Tx_HighPriority;
 
 architecture arch_Eth_Tx_HighPriority of Eth_Tx_HighPriority is
 
-component KCPSM2DSP
+component zcpsm2DSP
 	port(
 	clk				: in std_logic;
 	port_id			: in std_logic_vector(7 downto 0); 
@@ -92,9 +92,9 @@ signal m16_Tx_Req_Data_Reg		: std_logic_vector( 15 downto 0 );
 
 begin
 
-	mo_DspInterface : KCPSM2DSP
+	mo_DspInterface : zcpsm2DSP
 		port map(
-		clk				=> clk_KCPSM,
+		clk				=> clk_zcpsm,
 		port_id			=> port_id,
 		write_strobe	=> write_strobe,
 		out_port		=> out_port,

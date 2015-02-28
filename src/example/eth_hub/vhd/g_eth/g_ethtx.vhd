@@ -14,7 +14,7 @@ entity g_ethtx is
 		);
 	port (
 		clk					:	in	std_logic;
-		kcpsm_clk			:	in	std_logic;
+		zcpsm_clk			:	in	std_logic;
 		reset				:	in	std_logic;
 
 		txclk				:	in	std_logic;
@@ -92,13 +92,13 @@ architecture arch_ethtx of g_ethtx is
 		head_raddr : in std_logic_vector((HEAD_AWIDTH-1) downto 0);
 		head_rdata : out std_logic_vector(7 downto 0);
 		head_rd_block : in std_logic;
-		kcpsm_clk : in std_logic;
-		kcpsm_ce : in std_logic;
-		kcpsm_port_id : in std_logic_vector(3 downto 0);
-		kcpsm_write_strobe : in std_logic;
-		kcpsm_out_port : in std_logic_vector(7 downto 0);
-		kcpsm_read_strobe : in std_logic;
-		kcpsm_in_port : out std_logic_vector(7 downto 0));
+		zcpsm_clk : in std_logic;
+		zcpsm_ce : in std_logic;
+		zcpsm_port_id : in std_logic_vector(3 downto 0);
+		zcpsm_write_strobe : in std_logic;
+		zcpsm_out_port : in std_logic_vector(7 downto 0);
+		zcpsm_read_strobe : in std_logic;
+		zcpsm_in_port : out std_logic_vector(7 downto 0));
 	end component;
 	
 	component disdram
@@ -239,13 +239,13 @@ begin
 		head_raddr => db_head_raddr,
 		head_rdata => db_head_rdata,
 		head_rd_block => db_head_rd_block,
-		kcpsm_clk => kcpsm_clk,
-		kcpsm_ce => db_ce,
-		kcpsm_port_id => db_port_id,
-		kcpsm_write_strobe => db_write_strobe,
-		kcpsm_out_port => db_out_port,
-		kcpsm_read_strobe => db_read_strobe,
-		kcpsm_in_port => db_in_port
+		zcpsm_clk => zcpsm_clk,
+		zcpsm_ce => db_ce,
+		zcpsm_port_id => db_port_id,
+		zcpsm_write_strobe => db_write_strobe,
+		zcpsm_out_port => db_out_port,
+		zcpsm_read_strobe => db_read_strobe,
+		zcpsm_in_port => db_in_port
 		);
 	
 	u_tx_queue : ethtx_queue
@@ -261,13 +261,13 @@ begin
 		head_raddr => tx_head_raddr,
 		head_rdata => tx_head_rdata,
 		head_rd_block => tx_head_rd_block,
-		kcpsm_clk => kcpsm_clk,
-		kcpsm_ce => eth_ce,
-		kcpsm_port_id => eth_port_id,
-		kcpsm_write_strobe => eth_write_strobe,
-		kcpsm_out_port => eth_out_port,
-		kcpsm_read_strobe => eth_read_strobe,
-		kcpsm_in_port => eth_in_port
+		zcpsm_clk => zcpsm_clk,
+		zcpsm_ce => eth_ce,
+		zcpsm_port_id => eth_port_id,
+		zcpsm_write_strobe => eth_write_strobe,
+		zcpsm_out_port => eth_out_port,
+		zcpsm_read_strobe => eth_read_strobe,
+		zcpsm_in_port => eth_in_port
 		);
 	
 	u_tx_buffer : disdram

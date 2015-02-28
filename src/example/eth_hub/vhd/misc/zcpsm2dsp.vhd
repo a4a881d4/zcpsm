@@ -1,33 +1,33 @@
 ---------------------------------------------------------------------------------------------------
 --
--- Title       : kcpsm2dsp
+-- Title       : zcpsm2dsp
 -- Design      : baseband
 -- Author      : yanghb
 -- Company     : tsinghua
 --
 ---------------------------------------------------------------------------------------------------
 --
--- File        : kcpsm2dsp.vhd
+-- File        : zcpsm2dsp.vhd
 -- Generated   : Tue Jan  4 16:04:14 2005
 -- From        : interface description file
 -- By          : Itf2Vhdl ver. 1.20
 --
 ---------------------------------------------------------------------------------------------------
 --
--- Description : KCPSM to DSP interface transformer
+-- Description : zcpsm to DSP interface transformer
 --
 ---------------------------------------------------------------------------------------------------
 
 --{{ Section below this comment is automatically maintained
 --   and may be overwritten
---{entity {kcpsm2dsp} architecture {behave}}
+--{entity {zcpsm2dsp} architecture {behave}}
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 
 
 
-entity kcpsm2dsp is
+entity zcpsm2dsp is
 	port(
 		clk			: in std_logic;
 		port_id		: in std_logic_vector(7 downto 0); 
@@ -44,11 +44,11 @@ entity kcpsm2dsp is
 		dsp_dout	: in std_logic_vector(7 downto 0);
 		dsp_int		: in std_logic
 		);
-end kcpsm2dsp;
+end zcpsm2dsp;
 
 --}} End of automatically maintained section
 
-architecture behave of kcpsm2dsp is	
+architecture behave of zcpsm2dsp is	
 	
 begin
 	
