@@ -52,35 +52,17 @@ package eth_config is
 	
 	
 	constant PORT_ETH_TX_HIGHPRI_CE			:	std_logic_vector(3 downto 0)	:=	X"E";
-
 	constant PORT_ETH_TX_HIGHPRI_REQ		:	std_logic_vector(3 downto 0)	:=	X"0";
-
 	constant PORT_ETH_TX_HIGHPRI_ADDR_L		:	std_logic_vector(3 downto 0)	:=	X"1";
-
 	constant PORT_ETH_TX_HIGHPRI_ADDR_H		:	std_logic_vector(3 downto 0)	:=	X"2";
-
 	constant PORT_ETH_TX_HIGHPRI_DATA_L		:	std_logic_vector(3 downto 0)	:=	X"3";
-
-
 	constant PORT_ETH_TX_HIGHPRI_DATA_H		:	std_logic_vector(3 downto 0)	:=	X"4";
-
-
 	constant PORT_ETH_TX_HIGHPRI_DESMAC_0	:	std_logic_vector(3 downto 0)	:=	X"5";
-
-
 	constant PORT_ETH_TX_HIGHPRI_DESMAC_1	:	std_logic_vector(3 downto 0)	:=	X"6";
-
 	constant PORT_ETH_TX_HIGHPRI_DESMAC_2	:	std_logic_vector(3 downto 0)	:=	X"7";
-
-	
-constant PORT_ETH_TX_HIGHPRI_DESMAC_3	:	std_logic_vector(3 downto 0)	:=	X"8";
-
-	
-constant PORT_ETH_TX_HIGHPRI_DESMAC_4	:	std_logic_vector(3 downto 0)	:=	X"9";
-
+	constant PORT_ETH_TX_HIGHPRI_DESMAC_3	:	std_logic_vector(3 downto 0)	:=	X"8";
+	constant PORT_ETH_TX_HIGHPRI_DESMAC_4	:	std_logic_vector(3 downto 0)	:=	X"9";
 	constant PORT_ETH_TX_HIGHPRI_DESMAC_5	:	std_logic_vector(3 downto 0)	:=	X"A";
-
-
 	
 
 	constant PORT_ETH_LOCAL_ID_0_REQ	:	std_logic_vector(7 downto 0)	:=	X"F8";

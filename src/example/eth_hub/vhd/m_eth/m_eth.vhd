@@ -5,22 +5,20 @@ use ieee.std_logic_unsigned.all;
 
 use work.eth_config.all;
 
-entity eth is
+entity m_eth is
 	generic(
-		MII_WIDTH							:	natural		:=	8;
 		RAM_RD_CYCLE						:	natural		:=	2;
 		RAM_WR_CYCLE						:	natural		:=	2;	
 		RAM_RD_DELAY						:	natural		:=	1 ; --1
-		RAM_AWIDTH							:   natural 	:=  32;
-		RAM_DWIDTH							:   natural		:=	32
+		RAM_AWIDTH							:   natural 		:=  32							
 		);
 	port(
 		txclk			:	in	std_logic;
-		txd				:	out	std_logic_vector(MII_WIDTH-1 downto 0);
+		txd				:	out	std_logic_vector(3 downto 0);
 		txen			:	out	std_logic;
 		
 		rxclk			:	in	std_logic;
-		rxd				:	in	std_logic_vector(MII_WIDTH-1 downto 0);
+		rxd				:	in	std_logic_vector(3 downto 0);
 		rxdv			:	in	std_logic;
 		
 		clk				:	in	std_logic;
@@ -64,9 +62,9 @@ entity eth is
  ------------------------------------------------------------------------
 		ram_wren			:	out	std_logic;
 		ram_waddr			:	out	std_logic_vector(RAM_AWIDTH - 1 downto 0);
-		ram_wdata			: 	out	std_logic_vector(RAM_DWIDTH-1 downto 0);
+		ram_wdata			: 	out	std_logic_vector(15 downto 0);
 		ram_raddr			:	out	std_logic_vector(RAM_AWIDTH - 1 downto 0);
-		ram_rdata			:	in	std_logic_vector(RAM_DWIDTH-1 downto 0); 
+		ram_rdata			:	in	std_logic_vector(15 downto 0); 
 		
 		--
 		test				:	out std_logic_vector(1 downto 0);
@@ -83,7 +81,7 @@ entity eth is
 		);
 end entity;
 
-architecture arch_eth of eth is
+architecture arch_eth of m_eth is
 	
 	component ethrx
 	generic(
@@ -126,49 +124,6 @@ architecture arch_eth of eth is
 --		test : out std_logic_vector(3 downto 0); 				   
 		
 		ram_wdata : out std_logic_vector(15 downto 0));
-	end component;
-	
-	component g_ethrx
-	generic(
-		HEAD_AWIDTH : NATURAL := 5;
-		BUFF_AWIDTH : NATURAL := 12;
-		FIFO_AWIDTH : NATURAL := 2;
-		WR_CYCLE : NATURAL := 1;
-		RAM_AWIDTH : NATURAL :=32 
-		);
-	port(
-		clk : in std_logic;
-		zcpsm_clk : in std_logic;
-		reset : in std_logic;
-		rxclk : in std_logic;
-		rxd : in std_logic_vector(7 downto 0);
-		rxdv : in std_logic;
-		db_ce : in std_logic;
-		db_port_id : in std_logic_vector(3 downto 0);
-		db_write_strobe : in std_logic;
-		db_out_port : in std_logic_vector(7 downto 0);
-		db_read_strobe : in std_logic;
-		db_in_port : out std_logic_vector(7 downto 0);
-		eth_ce : in std_logic;
-		eth_port_id : in std_logic_vector(3 downto 0);
-		eth_write_strobe : in std_logic;
-		eth_out_port : in std_logic_vector(7 downto 0);
-		eth_read_strobe : in std_logic;
-		eth_in_port : out std_logic_vector(7 downto 0);
-		eth_dma_ce : in std_logic; 
-		
-		ethrx_busy	: out std_logic;
-		recvtime 			:	out std_logic_vector(31 downto 0);
-		recvtime_valid		:	out	std_logic;	
-		localtime_locked	:	out	std_logic;
-		lastframe_flag		:	out	std_logic;
-		
-		ram_wren : out std_logic;
-		ram_waddr : out std_logic_vector(RAM_AWIDTH - 1 downto 0);	
-		---------------
---		test : out std_logic_vector(3 downto 0); 				   
-		
-		ram_wdata : out std_logic_vector(31 downto 0));
 	end component;
 	
 	component ethrx_zcpsm
@@ -276,44 +231,6 @@ architecture arch_eth of eth is
 		);
 	end component;
 	
-	component g_ethtx
-	generic(
-		HEAD_AWIDTH 		: NATURAL := 5;
-		BUFF_AWIDTH 		: NATURAL := 5;
-		FIFO_AWIDTH 		: NATURAL := 2;
-		RD_CYCLE 			: NATURAL := 1;
-		RD_DELAY 			: NATURAL := 1;
-		RAM_AWIDTH			: NATURAL := 32
-		);
-	port(
-		clk 				: in std_logic;
-		zcpsm_clk 			: in std_logic;
-		reset 				: in std_logic;
-		txclk 				: in std_logic;
-		txd 				: out std_logic_vector(7 downto 0);
-		txen 				: out std_logic;
-		
-		eth_ce 				: in std_logic;
-		eth_port_id 		: in std_logic_vector(3 downto 0);
-		eth_write_strobe 	: in std_logic;
-		eth_out_port 		: in std_logic_vector(7 downto 0);
-		eth_read_strobe 	: in std_logic;	
-		eth_in_port 		: out std_logic_vector(7 downto 0);	 
-		
-		db_ce 				: in std_logic;
-		db_port_id 			: in std_logic_vector(3 downto 0);
-		db_write_strobe 	: in std_logic;
-		db_out_port 		: in std_logic_vector(7 downto 0);
-		db_read_strobe 		: in std_logic;
-		db_in_port 			: out std_logic_vector(7 downto 0);	
-		
-		ram_raddr 			: out std_logic_vector(RAM_AWIDTH - 1 downto 0);
-		ram_rdata 			: in std_logic_vector(31 downto 0);
-		-- localtime --
-		localtime			: in std_logic_vector(31 downto 0)
-		);
-	end component;
-
 	component ethtx_zcpsm
 	port(
 		reset 				: in std_logic;
@@ -481,91 +398,48 @@ begin
 	------------------------------------------------------------------------------
 	--	RX
 	------------------------------------------------------------------------------
-	Eth100BaseRx : if MII_WIDTH = 4 generate
-		u_rx : ethrx
-		generic map(
-			HEAD_AWIDTH => ETHRX_HEAD_AWIDTH,
-			BUFF_AWIDTH => ETHRX_BUFF_AWIDTH,
-			FIFO_AWIDTH => ETHRX_FIFO_AWIDTH,
-			WR_CYCLE => RAM_WR_CYCLE,
-			RAM_AWIDTH => RAM_AWIDTH
-			)
-		port map(
-			clk => clk,
-			zcpsm_clk => zcpsm_clk,
-			reset => reset,
-			rxclk => rxclk,
-			rxd => rxd,
-			rxdv => rxdv,
-			db_ce => db_rx_ce,
-			db_port_id => db_port_id(3 downto 0),
-			db_write_strobe => db_write_strobe,
-			db_out_port => db_out_port,
-			db_read_strobe => db_read_strobe,
-			db_in_port => db_in_port,
-			eth_ce => eth_rx_ce,
-			eth_port_id => ethrx_port_id(3 downto 0),
-			eth_write_strobe => ethrx_write_strobe,
-			eth_out_port => ethrx_out_port,
-			eth_read_strobe => ethrx_read_strobe,
-			eth_in_port => ethrx_in_port,
-			eth_dma_ce => eth_rxdma_ce,	 
-			
-			ethrx_busy	=>	ethrx_busy,
-			recvtime 			=>	recvtime,
-			recvtime_valid		=>	recvtime_valid,	
-			localtime_locked	=>  localtime_locked,
-			lastframe_flag		=>	lastframe_flag,
-			
-			ram_wren => ram_wren,
-			ram_waddr => ram_waddr,	
-			-----
-			ram_wdata => ram_wdata
-			);
-	end generate Eth100BaseRx;
 	
-	Eth1000BaseRx : if MII_WIDTH = 8 generate
-	u_rx : g_ethrx
-		generic map(
-			HEAD_AWIDTH => ETHRX_HEAD_AWIDTH,
-			BUFF_AWIDTH => ETHRX_BUFF_AWIDTH,
-			FIFO_AWIDTH => ETHRX_FIFO_AWIDTH,
-			WR_CYCLE => RAM_WR_CYCLE,
-			RAM_AWIDTH => RAM_AWIDTH
-			)
-		port map(
-			clk => clk,
-			zcpsm_clk => zcpsm_clk,
-			reset => reset,
-			rxclk => rxclk,
-			rxd => rxd,
-			rxdv => rxdv,
-			db_ce => db_rx_ce,
-			db_port_id => db_port_id(3 downto 0),
-			db_write_strobe => db_write_strobe,
-			db_out_port => db_out_port,
-			db_read_strobe => db_read_strobe,
-			db_in_port => db_in_port,
-			eth_ce => eth_rx_ce,
-			eth_port_id => ethrx_port_id(3 downto 0),
-			eth_write_strobe => ethrx_write_strobe,
-			eth_out_port => ethrx_out_port,
-			eth_read_strobe => ethrx_read_strobe,
-			eth_in_port => ethrx_in_port,
-			eth_dma_ce => eth_rxdma_ce,	 
-			
-			ethrx_busy	=>	ethrx_busy,
-			recvtime 			=>	recvtime,
-			recvtime_valid		=>	recvtime_valid,	
-			localtime_locked	=>  localtime_locked,
-			lastframe_flag		=>	lastframe_flag,
-			
-			ram_wren => ram_wren,
-			ram_waddr => ram_waddr,	
-			-----
-			ram_wdata => ram_wdata
-			);
-	end generate Eth1000BaseRx;
+	u_rx : ethrx
+	generic map(
+		HEAD_AWIDTH => ETHRX_HEAD_AWIDTH,
+		BUFF_AWIDTH => ETHRX_BUFF_AWIDTH,
+		FIFO_AWIDTH => ETHRX_FIFO_AWIDTH,
+		WR_CYCLE => RAM_WR_CYCLE,
+		RAM_AWIDTH => RAM_AWIDTH
+		)
+	port map(
+		clk => clk,
+		zcpsm_clk => zcpsm_clk,
+		reset => reset,
+		rxclk => rxclk,
+		rxd => rxd,
+		rxdv => rxdv,
+		db_ce => db_rx_ce,
+		db_port_id => db_port_id(3 downto 0),
+		db_write_strobe => db_write_strobe,
+		db_out_port => db_out_port,
+		db_read_strobe => db_read_strobe,
+		db_in_port => db_in_port,
+		eth_ce => eth_rx_ce,
+		eth_port_id => ethrx_port_id(3 downto 0),
+		eth_write_strobe => ethrx_write_strobe,
+		eth_out_port => ethrx_out_port,
+		eth_read_strobe => ethrx_read_strobe,
+		eth_in_port => ethrx_in_port,
+		eth_dma_ce => eth_rxdma_ce,	 
+		
+		ethrx_busy	=>	ethrx_busy,
+		recvtime 			=>	recvtime,
+		recvtime_valid		=>	recvtime_valid,	
+		localtime_locked	=>  localtime_locked,
+		lastframe_flag		=>	lastframe_flag,
+		
+		ram_wren => ram_wren,
+		ram_waddr => ram_waddr,	
+		-----
+		ram_wdata => ram_wdata
+		);
+	
 --	db_rx_ce <= '1' when db_port_id(7 downto 4) = PORTS_DB_RX else '0';
 --	eth_rx_ce <= '1' when ethrx_port_id(7 downto 4) = PORTS_ETH_RX else '0';
 --	eth_rxdma_ce <= '1' when ethrx_port_id(7 downto 4) = PORTS_ETH_RXDMA else '0';
@@ -659,78 +533,40 @@ begin
 	------------------------------------------------------------------------------
 	--	TX
 	------------------------------------------------------------------------------
-	Eth100BaseTx : if MII_WIDTH = 4 generate
-		u_tx : ethtx
-		generic map(
-			HEAD_AWIDTH => ETHTX_HEAD_AWIDTH,
-			BUFF_AWIDTH => ETHTX_BUFF_AWIDTH,
-			FIFO_AWIDTH => ETHTX_FIFO_AWIDTH,
-			RD_CYCLE => RAM_RD_CYCLE,
-			RD_DELAY => RAM_RD_DELAY,
-			RAM_AWIDTH => RAM_AWIDTH
-			)
-		port map(
-			clk => clk,
-			zcpsm_clk => zcpsm_clk,
-			reset => reset,
-			txclk => txclk,
-			txd => txd,
-			txen => txen_buf,
-			db_ce => db_tx_ce,
-			db_port_id => db_port_id(3 downto 0),
-			db_write_strobe => db_write_strobe,
-			db_out_port => db_out_port,
-			db_read_strobe => db_read_strobe,
-			db_in_port => db_in_port,
-			eth_ce => eth_tx_ce,
-			eth_port_id => ethtx_port_id(3 downto 0),
-			eth_write_strobe => ethtx_write_strobe,
-			eth_out_port => ethtx_out_port,
-			eth_read_strobe => ethtx_read_strobe,
-			eth_in_port => ethtx_in_port,
-			ram_raddr => ram_raddr,
-			ram_rdata => ram_rdata,
-			-- local time--
-			localtime => localtime
-			);
-	end generate Eth100BaseTx;
 	
-	Eth1000BaseTx : if MII_WIDTH = 8 generate
-		u_tx : g_ethtx
-		generic map(
-			HEAD_AWIDTH => ETHTX_HEAD_AWIDTH,
-			BUFF_AWIDTH => ETHTX_BUFF_AWIDTH,
-			FIFO_AWIDTH => ETHTX_FIFO_AWIDTH,
-			RD_CYCLE => RAM_RD_CYCLE,
-			RD_DELAY => RAM_RD_DELAY,
-			RAM_AWIDTH => RAM_AWIDTH
-			)
-		port map(
-			clk => clk,
-			zcpsm_clk => zcpsm_clk,
-			reset => reset,
-			txclk => txclk,
-			txd => txd,
-			txen => txen_buf,
-			db_ce => db_tx_ce,
-			db_port_id => db_port_id(3 downto 0),
-			db_write_strobe => db_write_strobe,
-			db_out_port => db_out_port,
-			db_read_strobe => db_read_strobe,
-			db_in_port => db_in_port,
-			eth_ce => eth_tx_ce,
-			eth_port_id => ethtx_port_id(3 downto 0),
-			eth_write_strobe => ethtx_write_strobe,
-			eth_out_port => ethtx_out_port,
-			eth_read_strobe => ethtx_read_strobe,
-			eth_in_port => ethtx_in_port,
-			ram_raddr => ram_raddr,
-			ram_rdata => ram_rdata,
-			-- local time--
-			localtime => localtime
-			);
-	end generate Eth1000BaseTx;
-	
+	u_tx : ethtx
+	generic map(
+		HEAD_AWIDTH => ETHTX_HEAD_AWIDTH,
+		BUFF_AWIDTH => ETHTX_BUFF_AWIDTH,
+		FIFO_AWIDTH => ETHTX_FIFO_AWIDTH,
+		RD_CYCLE => RAM_RD_CYCLE,
+		RD_DELAY => RAM_RD_DELAY,
+		RAM_AWIDTH => RAM_AWIDTH
+		)
+	port map(
+		clk => clk,
+		zcpsm_clk => zcpsm_clk,
+		reset => reset,
+		txclk => txclk,
+		txd => txd,
+		txen => txen_buf,
+		db_ce => db_tx_ce,
+		db_port_id => db_port_id(3 downto 0),
+		db_write_strobe => db_write_strobe,
+		db_out_port => db_out_port,
+		db_read_strobe => db_read_strobe,
+		db_in_port => db_in_port,
+		eth_ce => eth_tx_ce,
+		eth_port_id => ethtx_port_id(3 downto 0),
+		eth_write_strobe => ethtx_write_strobe,
+		eth_out_port => ethtx_out_port,
+		eth_read_strobe => ethtx_read_strobe,
+		eth_in_port => ethtx_in_port,
+		ram_raddr => ram_raddr,
+		ram_rdata => ram_rdata,
+		-- local time--
+		localtime => localtime
+		);
 	
 	txen <= txen_buf;
 	

@@ -277,10 +277,10 @@ main(int argc, char *argv[])
 	genLog(argv[2]);
 	fclose(fp);
 	strcpy(fn,argv[1]);
-	strcat(fn,".hex");
+	strcat(fn,".bit");
 	fp=fopen(fn,"wt");
 	for( i=0;i<codeline;i++ )
-		fprintf(fp,"%05X \n",code[i]);
+		fprintf(fp,"%s\n",genBitString(code[i],18));
 	fclose(fp);
 }
 
