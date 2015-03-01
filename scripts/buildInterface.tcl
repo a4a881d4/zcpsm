@@ -95,3 +95,78 @@ set zcpsmProgBus {
 
 buildInterface zcpsmProgBus $zcpsmProgBus
 
+
+#		prog_we	: in std_logic;
+#		prog_clk: in std_logic;
+#		prog_addr : in std_logic_vector( AWIDTH-1 downto 0 );
+#		prog_din : in std_logic_vector( 17 downto 0 )
+
+set zcpsmISPBus {
+	{
+		name prog_addr
+		master_direction out
+		slave_direction in
+		width -1
+	}
+	{
+		name prog_clk
+		master_direction out
+		slave_direction in
+		width 1
+	}
+	{
+		name prog_we
+		master_direction out
+		slave_direction in
+		width 1
+	}
+	{
+		name prog_data
+		master_direction out
+		slave_direction in
+		width 18
+	}
+}
+
+buildInterface zcpsmISPBus $zcpsmISPBus
+
+set zcpsmBus {
+	{
+		name port_ce
+		master_direction out
+		slave_direction in
+		width 16
+	}
+	{
+		name port_id
+		master_direction out
+		slave_direction in
+		width 4
+	}
+	{
+		name write_strobe
+		master_direction out
+		slave_direction in
+		width 1
+	}
+	{
+		name out_port
+		master_direction out
+		slave_direction in
+		width 8
+	}
+	{
+		name read_strobe
+		master_direction out
+		slave_direction in
+		width 1
+	}
+	{
+		name in_port
+		master_direction in
+		slave_direction out
+		width 8
+	}
+}
+
+buildInterface zcpsmBus $zcpsmBus

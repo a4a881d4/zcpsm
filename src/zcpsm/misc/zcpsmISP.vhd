@@ -31,7 +31,7 @@ entity zcpsmISP is
 		prog_addr : in std_logic_vector( AWIDTH-1 downto 0 );
 		prog_din : in std_logic_vector( 17 downto 0 )
 		
-		);
+	);
 end zcpsmISP;
 
 --}} End of automatically maintained section
@@ -49,7 +49,8 @@ architecture behavior of zcpsmISP is
 			in_port 	:	in std_logic_vector(7 downto 0);
 			interrupt 	:	in std_logic;
 			reset 		:	in std_logic;
-			clk 		:	in std_logic);
+			clk 		:	in std_logic
+		);
 	end component;
 
 	component zcpsmProgRam
@@ -59,8 +60,11 @@ architecture behavior of zcpsmISP is
 	);
 	port (
 		clk : in std_logic;
+		reset: in std_logic;
+		
 		addr : in std_logic_vector( AWIDTH-1 downto 0 );
 		dout : out std_logic_vector( 17 downto 0 );
+		soft_rst : out std_logic;
 		
 		prog_we	: in std_logic;
 		prog_clk: in std_logic;
@@ -79,9 +83,13 @@ architecture behavior of zcpsmISP is
 	signal address : std_logic_vector(11 downto 0);
 	signal instruction : std_logic_vector(17 downto 0);	 
 	signal port_id_i 	: std_logic_vector(7 downto 0);
+	signal soft_reset : std_logic;
+	signal zcpsm_reset : std_logic;
+	
 begin
 
 	port_id <= port_id_i( 3 downto 0 );
+	zcpsm_reset <= reset or soft_reset;
 	
 	u_rx_zcpsm : zcpsm
 	port map(
@@ -93,7 +101,7 @@ begin
 		read_strobe => read_strobe,
 		in_port => in_port,
 		interrupt => '0',
-		reset => reset,
+		reset => zcpsm_reset,
 		clk => clk
 		);
 
@@ -104,8 +112,11 @@ begin
     )
 	port map(
 		clk => clk,
+		reset => reset,
+		
 		addr => address( AWIDTH-1 downto 0 ),
 		dout => instruction,
+		soft_reset => soft_reset,
 		
 		prog_we	=> prog_we,
 		prog_clk => prog_clk,

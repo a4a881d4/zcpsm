@@ -19,8 +19,11 @@ entity zcpsmProgRam is
 	);
 	port (
 		clk : in std_logic;
+		reset: in std_logic;
+		
 		addr : in std_logic_vector( AWIDTH-1 downto 0 );
 		dout : out std_logic_vector( 17 downto 0 );
+		soft_rst : out std_logic;
 		
 		prog_we	: in std_logic;
 		prog_clk: in std_logic;
@@ -44,10 +47,18 @@ architecture syn of zcpsmProgRam is
             return RAM;
         end function;
 	signal RAM : RamType := InitRamFromFile(PROG);
+	signal soft_rst_i : std_logic;
+	signal ones : std_logic_vector( 31 downto 0 );
+begin
+
+	soft_rst <= soft_rst_i;
+	ones <= ( others=>'0' );
+	
+	process( prog_clk, reset )
 	begin
-	process (clk)
-	begin
-		if clk'event and clk = '1' then
+		if reset='1' then
+			dout <= ( others=>'0' );
+		elsif clk'event and clk = '1' then
 			dout <= to_stdlogicvector(RAM(conv_integer(addr)));
 		end if;
 	end process;
@@ -55,7 +66,21 @@ architecture syn of zcpsmProgRam is
 	program : process (prog_clk)
 	begin
 		if prog_clk'event and prog_clk = '1' then
-			RAM(conv_integer(prog_addr)) <= to_bitvector(prog_din);
+			if prog_we = '1' then 
+				RAM(conv_integer(prog_addr)) <= to_bitvector(prog_din);
+			end if;
 		end if;
-	end process;	
+	end process;
+
+	soft_reset : process( prog_clk, reset )
+	begin
+		if reset='1' then
+			soft_rst_i <= '0';
+		elsif prog_clk'event and prog_clk = '1' then
+			if prog_we = '1' and prog_addr = ones( AWIDTH-1 downto 0 ) then 
+				soft_rst_i <= prog_din(0);
+			end if;
+		end if; 
+	end process;
+	
 end syn;

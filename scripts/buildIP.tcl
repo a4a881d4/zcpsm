@@ -30,7 +30,77 @@ proc zcpsmInterface {} {
 
 }
 
-proc zcpsmISPInterface {} {}
+proc zcpsmISPInterface {} {
+
+	ipx::add_bus_interface ISP [ipx::current_core]
+	set_property abstraction_type_vlnv xilinx.com:user:zcpsmISPBus_rtl:1.0 [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
+	set_property bus_type_vlnv xilinx.com:user:zcpsmISPBus:1.0 [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
+	ipx::add_port_map prog_data [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
+	set_property physical_name prog_din [ipx::get_port_maps prog_data -of_objects [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]]
+	ipx::add_port_map prog_clk [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
+	set_property physical_name prog_clk [ipx::get_port_maps prog_clk -of_objects [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]]
+	ipx::add_port_map prog_addr [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
+	set_property physical_name prog_addr [ipx::get_port_maps prog_addr -of_objects [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]]
+	ipx::add_port_map prog_we [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
+	set_property physical_name prog_we [ipx::get_port_maps prog_we -of_objects [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]]
+	
+	ipx::add_bus_interface aBus [ipx::current_core]
+	set_property abstraction_type_vlnv xilinx.com:user:zcpsmBus_rtl:1.0 [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]
+	set_property bus_type_vlnv xilinx.com:user:zcpsmBus:1.0 [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]
+	set_property interface_mode master [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]
+	ipx::add_port_map port_ce [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]
+	set_property physical_name port_ce [ipx::get_port_maps port_ce -of_objects [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]]
+	ipx::add_port_map write_strobe [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]
+	set_property physical_name write_strobe [ipx::get_port_maps write_strobe -of_objects [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]]
+	ipx::add_port_map read_strobe [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]
+	set_property physical_name read_strobe [ipx::get_port_maps read_strobe -of_objects [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]]
+	ipx::add_port_map port_id [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]
+	set_property physical_name port_id [ipx::get_port_maps port_id -of_objects [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]]
+	ipx::add_port_map in_port [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]
+	set_property physical_name in_port [ipx::get_port_maps in_port -of_objects [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]]
+	ipx::add_port_map out_port [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]
+	set_property physical_name out_port [ipx::get_port_maps out_port -of_objects [ipx::get_bus_interfaces aBus -of_objects [ipx::current_core]]]
+
+	ipx::remove_bus_interface BRAM_PORTA_signal_clock [ipx::current_core]
+	ipx::remove_bus_interface prog_signal_clock [ipx::current_core]
+
+}
+proc zProg2BramInterface {} {
+
+	ipx::add_bus_interface ISP [ipx::current_core]
+	set_property abstraction_type_vlnv xilinx.com:user:zcpsmISPBus_rtl:1.0 [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
+	set_property bus_type_vlnv xilinx.com:user:zcpsmISPBus:1.0 [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
+	set_property interface_mode master [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
+	ipx::add_port_map prog_data [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
+	set_property physical_name prog_din [ipx::get_port_maps prog_data -of_objects [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]]
+	ipx::add_port_map prog_clk [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
+	set_property physical_name prog_clk [ipx::get_port_maps prog_clk -of_objects [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]]
+	ipx::add_port_map prog_addr [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
+	set_property physical_name prog_addr [ipx::get_port_maps prog_addr -of_objects [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]]
+	ipx::add_port_map prog_we [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
+	set_property physical_name prog_we [ipx::get_port_maps prog_we -of_objects [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]]
+	
+	ipx::add_bus_interface armBus [ipx::current_core]
+	set_property abstraction_type_vlnv xilinx.com:interface:bram_rtl:1.0 [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
+	set_property bus_type_vlnv xilinx.com:interface:bram:1.0 [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
+	set_property interface_mode master [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
+	set_property interface_mode slave [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
+	ipx::add_port_map RST [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
+	set_property physical_name BRAM_PORTA_rst [ipx::get_port_maps RST -of_objects [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]]
+	ipx::add_port_map CLK [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
+	set_property physical_name BRAM_PORTA_clk [ipx::get_port_maps CLK -of_objects [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]]
+	ipx::add_port_map DIN [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
+	set_property physical_name BRAM_PORTA_din [ipx::get_port_maps DIN -of_objects [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]]
+	ipx::add_port_map EN [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
+	set_property physical_name BRAM_PORTA_en [ipx::get_port_maps EN -of_objects [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]]
+	ipx::add_port_map DOUT [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
+	set_property physical_name BRAM_PORTA_dout [ipx::get_port_maps DOUT -of_objects [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]]
+	ipx::add_port_map WE [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
+	set_property physical_name BRAM_PORTA_we [ipx::get_port_maps WE -of_objects [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]]
+	ipx::add_port_map ADDR [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
+	set_property physical_name BRAM_PORTA_addr [ipx::get_port_maps ADDR -of_objects [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]]
+
+}
 
 proc buildip { top } {
 	set dir ../proj/$top
@@ -67,5 +137,8 @@ proc buildip { top } {
 
 file mkdir ../lib
 #buildip zcpsm
+
 buildip zcpsmISP
+
+buildip zProg2Bram
 
