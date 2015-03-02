@@ -73,8 +73,6 @@ proc zProg2BramInterface {} {
 	set_property interface_mode master [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
 	ipx::add_port_map prog_data [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
 	set_property physical_name prog_din [ipx::get_port_maps prog_data -of_objects [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]]
-	ipx::add_port_map prog_clk [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
-	set_property physical_name prog_clk [ipx::get_port_maps prog_clk -of_objects [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]]
 	ipx::add_port_map prog_addr [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
 	set_property physical_name prog_addr [ipx::get_port_maps prog_addr -of_objects [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]]
 	ipx::add_port_map prog_we [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
@@ -102,6 +100,15 @@ proc zProg2BramInterface {} {
 
 }
 
+proc zOutRegInterface {} {
+
+#	set_property value_format bitString [ipx::get_user_parameters port_ixd -of_objects [ipx::current_core]]
+#	set_property value {"0000"} [ipx::get_user_parameters port_ixd -of_objects [ipx::current_core]]
+#	set_property value_bit_string_length 4 [ipx::get_user_parameters port_ixd -of_objects [ipx::current_core]]
+#	put "modify property"
+
+}
+
 proc buildip { top } {
 	set dir ../proj/$top
 	if [file exists $dir] {
@@ -116,6 +123,7 @@ proc buildip { top } {
 	update_compile_order -fileset sources_1
 	set_property top $top [current_fileset]
 	update_compile_order -fileset sources_1
+	set ipdir {}
 	append ipdir ../proj / $top / $top .srcs/sources_1/imports
 	put $ipdir
 	ipx::package_project -root_dir $ipdir
@@ -142,3 +150,4 @@ buildip zcpsmISP
 
 buildip zProg2Bram
 
+buildip zOutReg

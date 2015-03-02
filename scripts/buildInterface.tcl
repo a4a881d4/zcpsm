@@ -109,12 +109,6 @@ set zcpsmISPBus {
 		width -1
 	}
 	{
-		name prog_clk
-		master_direction out
-		slave_direction in
-		width 1
-	}
-	{
 		name prog_we
 		master_direction out
 		slave_direction in
