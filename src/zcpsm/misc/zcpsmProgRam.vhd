@@ -54,7 +54,7 @@ begin
 	soft_rst <= soft_rst_i;
 	ones <= ( others=>'0' );
 	
-	process( prog_clk, reset )
+	process( clk, reset )
 	begin
 		if reset='1' then
 			dout <= ( others=>'0' );

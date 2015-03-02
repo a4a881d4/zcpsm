@@ -116,7 +116,7 @@ begin
 		
 		addr => address( AWIDTH-1 downto 0 ),
 		dout => instruction,
-		soft_reset => soft_reset,
+		soft_rst => soft_reset,
 		
 		prog_we	=> prog_we,
 		prog_clk => prog_clk,

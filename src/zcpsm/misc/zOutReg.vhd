@@ -23,7 +23,7 @@ begin
 	RegOut : process( zClk )
 	begin 
 		if zClk'event and zClk='1' then
-			if port_ce='1' and port_id = conv_std_logic_vector(port_ixd) and write_strobe = '1' then
+			if port_ce='1' and port_id = conv_std_logic_vector(port_ixd,4) and write_strobe = '1' then
 				Q <= out_port;
 			end if;
 		end if;

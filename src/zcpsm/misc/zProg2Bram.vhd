@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity zProg2Bram is
   port (
     BRAM_PORTA_addr : in STD_LOGIC_VECTOR ( 12 downto 0 );
-    BRAM_PORTA_clk : in STD_LOGIC;
+--    BRAM_PORTA_clk : in STD_LOGIC;
     BRAM_PORTA_din : in STD_LOGIC_VECTOR ( 31 downto 0 );
     BRAM_PORTA_dout : out STD_LOGIC_VECTOR ( 31 downto 0 );
     BRAM_PORTA_en : in STD_LOGIC;
