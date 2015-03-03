@@ -22,7 +22,9 @@ proc buildInterface { interface ports } {
 		set_property slave_direction $port(slave_direction) [ipx::get_bus_abstraction_ports $name -of_objects [ipx::current_busabs]]
 		set_property master_width $port(width) [ipx::get_bus_abstraction_ports $name -of_objects [ipx::current_busabs]]
 		set_property slave_width $port(width) [ipx::get_bus_abstraction_ports $name -of_objects [ipx::current_busabs]]
-	
+		if { [array get port clock] !="" } {
+			set_property is_clock true [ipx::get_bus_abstraction_ports $name -of_objects [ipx::current_busabs]]
+		}
 	}
 	ipx::save_abstraction_definition [ipx::current_busabs]
 	ipx::save_bus_definition [ipx::current_busdef]
@@ -113,6 +115,13 @@ set zcpsmISPBus {
 		master_direction out
 		slave_direction in
 		width 1
+	}
+	{
+		name prog_clk
+		master_direction out
+		slave_direction in
+		width 1
+		clock 1
 	}
 	{
 		name prog_data
