@@ -116,8 +116,8 @@ create_bd_port -dir I -type clk FPGA_CLK
 set_property CONFIG.FREQ_HZ 25000000 [get_bd_ports FPGA_CLK]
 endgroup
 connect_bd_net [get_bd_ports FPGA_CLK] [get_bd_pins clk_wiz_0/clk_in1]
-connect_bd_net -net [get_bd_nets clk_wiz_0_clk_out1] [get_bd_pins zOutReg_0/zClk] [get_bd_pins clk_wiz_0/clk_out1]
-connect_bd_net -net [get_bd_nets clk_wiz_0_clk_out1] [get_bd_pins zcpsmISP_0/clk] [get_bd_pins clk_wiz_0/clk_out1]
+# connect_bd_net -net [get_bd_nets clk_wiz_0_clk_out1] [get_bd_pins zOutReg_0/zClk] [get_bd_pins clk_wiz_0/clk_out1]
+
 connect_bd_net -net [get_bd_nets xlconstant_0_dout] [get_bd_pins clk_wiz_0/reset] [get_bd_pins xlconstant_0/dout]
 # connect_bd_net [get_bd_pins armbus/bram_clk_a] [get_bd_pins zcpsmISP_0/prog_clk]
 
