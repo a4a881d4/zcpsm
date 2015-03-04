@@ -77,11 +77,12 @@ proc zProg2BramInterface {} {
 	set_property physical_name prog_addr [ipx::get_port_maps prog_addr -of_objects [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]]
 	ipx::add_port_map prog_we [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
 	set_property physical_name prog_we [ipx::get_port_maps prog_we -of_objects [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]]
+	ipx::add_port_map prog_clk [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]
+	set_property physical_name prog_clk [ipx::get_port_maps prog_clk -of_objects [ipx::get_bus_interfaces ISP -of_objects [ipx::current_core]]]
 	
 	ipx::add_bus_interface armBus [ipx::current_core]
 	set_property abstraction_type_vlnv xilinx.com:interface:bram_rtl:1.0 [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
 	set_property bus_type_vlnv xilinx.com:interface:bram:1.0 [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
-	set_property interface_mode master [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
 	set_property interface_mode slave [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
 	ipx::add_port_map RST [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]
 	set_property physical_name BRAM_PORTA_rst [ipx::get_port_maps RST -of_objects [ipx::get_bus_interfaces armBus -of_objects [ipx::current_core]]]
