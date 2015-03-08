@@ -31,7 +31,6 @@ entity g_ethtx_output is
 		dma_start			:	out	std_logic; 
 		
 		dma_start_addr		:	out	std_logic_vector(RAM_AWIDTH - 1 downto 0);
---		 dma_start_addr		:	out	std_logic_vector(23 downto 0);
 		
 		dma_length			:	out	std_logic_vector(15 downto 0);
 		dma_step			:	out	std_logic_vector(7 downto 0);
@@ -96,23 +95,17 @@ architecture arch_ethtx_output of g_ethtx_output is
 			);
 	end component;
 	
---	constant INFO_LENGTH	:	natural		:=	7;
 	constant INFO_LENGTH	:	natural		:=	8;
  
---	signal full				:	std_logic;	
 	signal ce				:	std_logic;
 	signal ce_d1			:	std_logic;
 	signal ce_ext			:	std_logic;
 	signal ce_ext_d1		:	std_logic;
 	signal ce_ext_d2		:	std_logic;
---	signal txd_int			:	std_logic_vector(7 downto 0);
---	signal txen_int			:	std_logic;
 	signal txd_buf			:	std_logic_vector(7 downto 0);
 	signal txen_buf			:	std_logic;
 	signal txd_buf_d1		:	std_logic_vector(7 downto 0);
 	signal txen_buf_d1		:	std_logic;
---	signal d_int			:	std_logic_vector(8 downto 0);
---	signal d_ext			:	std_logic_vector(8 downto 0);
 
 	signal TxFIFO_clr	:	std_logic;
 	signal TxFIFO_wea	:	std_logic;
@@ -125,7 +118,6 @@ architecture arch_ethtx_output of g_ethtx_output is
 	signal TxFIFO_DN	:	std_logic_vector(3 downto 0);
 
 	signal busy				:	std_logic;
---	signal nibble_cnt		:	std_logic_vector(11 downto 0);
 	signal byte_cnt		:	std_logic_vector(11 downto 0);	   
 	signal byte_cnt_d1	:	std_logic_vector(11 downto 0);
 	signal byte_cnt_ext		:	std_logic_vector(11 downto 0);	   
@@ -142,11 +134,7 @@ architecture arch_ethtx_output of g_ethtx_output is
 	signal info_cnt			:	integer range 0 to INFO_LENGTH;
 	signal info_cnt_d1		:	integer range 0 to INFO_LENGTH;
 	signal data_ena			:	std_logic;
---	signal data_ena_d1		:	std_logic;
---	signal data_ena_d2		:	std_logic;
 	signal data_ena_d8		:	std_logic;	
---	signal data_ena_d12		:	std_logic;
---	signal data_ena_d13		:	std_logic;
 	signal data_ena_ext			:	std_logic;
 	signal data_ena_ext_d1		:	std_logic;
 	signal data_ena_ext_d2		:	std_logic;
@@ -165,10 +153,6 @@ architecture arch_ethtx_output of g_ethtx_output is
 	signal data_start_ext	:	std_logic;
 	signal data_start_ext_wren	:	std_logic;
 	
---	signal byte_data		:	std_logic_vector(7 downto 0);
---	signal nibble_data		:	std_logic_vector(3 downto 0);
---	signal nibble_data_buf	:	std_logic_vector(3 downto 0);
---	signal nibble_data_dly	:	std_logic_vector(3 downto 0);
 	signal dword_data_int		:	std_logic_vector(31 downto 0);
 	signal dword_data_ext		:	std_logic_vector(31 downto 0);
 	signal byte_data		:	std_logic_vector(7 downto 0);
@@ -208,9 +192,6 @@ architecture arch_ethtx_output of g_ethtx_output is
 	
 begin 
 	
---	p_IFG_count	: process(clk, reset)
-	
-	
 	p_info_start : process(clk, reset)
 	begin
 		if reset = '1' then
@@ -235,8 +216,6 @@ begin
 		end if;
 	end process;
 	
---	busy <= info_start or info_ena or data_start or data_ena or data_ena_d3;
---	busy <= info_start or info_ena or data_start or data_ena or data_ena_d4 or IFG_busy;
 	busy <= info_start or info_ena or data_start or data_ena or data_ena_d8 or data_ena_ext or data_ena_ext_d13 or IFG_busy;
 
 	p_info_cnt : process(clk, reset)
@@ -269,37 +248,11 @@ begin
 	
 	data_start <= '1' when info_cnt = INFO_LENGTH else '0';
 	
---	p_nibble_cnt : process(clk, reset)
---	begin
---		if reset = '1' then
---			data_ena <= '0';
---			nibble_cnt <= (others => '0');
---		elsif rising_edge(clk) then
---			if ce = '1' then
---				if data_start = '1' then
---					data_ena <= '1';
---				elsif nibble_cnt = (data_length & '0') - 1 then
---					data_ena <= '0';
---				end if;
---				
---				if data_start = '1' then
---					nibble_cnt <= (others => '0');
---				else
---					nibble_cnt <= nibble_cnt + 1;
---				end if;
---			end if;
---		end if;
---	end process;
---	
---	head_ena <= '1' when data_ena = '1' and nibble_cnt < head_length & '0' else '0';
---	buff_ena <= '1' when data_ena = '1' and nibble_cnt >= head_length & '0' else '0';
 
 	p_byte_cnt : process(clk, reset)
 	begin
 		if reset = '1' then
 			data_ena <= '0';
---			data_ena_d1 <= '0';
---			data_ena_d2 <= '0';
 			byte_cnt <= (others => '0');  
 			byte_cnt_d1 <= (others=>'0');  
 			head_ena_d1 <= '0';
@@ -320,8 +273,6 @@ begin
 				elsif buff_ena = '1' then 
 					byte_cnt <= byte_cnt + 4;
 				end if;	
---				data_ena_d1 <= data_ena;
---				data_ena_d2 <= data_ena_d1;
 			end if;	 
 			byte_cnt_d1 <= byte_cnt;
 			head_ena_d1 <= head_ena; 
@@ -333,7 +284,6 @@ begin
 		
 	------------------------------------------------------------------------------
 	
---	head_rden <= (info_ena or (head_ena and (not nibble_cnt(0)))) and ce;
 	head_rden <= (info_ena or head_ena) and ce;
 	
 	p_head_raddr : process(clk, reset)
@@ -358,7 +308,6 @@ begin
 	
 	
 		
---	head_rd_block <= '1' when nibble_cnt = head_length & '0' else '0';
 	head_rd_block <= '1' when byte_cnt = head_length else '0';
 	
 	tx_head_rd_block <= head_rd_block and ce and (not source_select);
@@ -387,13 +336,10 @@ begin
 						dma_start_addr(15 downto 8) <= head_rdata;
 						when 5 =>
 						dma_start_addr(23 downto 16) <= head_rdata;	 
-						-- 4 bytes dma addr --  
 						when 6 =>
 						dma_start_addr(31 downto 24) <= head_rdata;
 						when 7 =>
 						dma_step <= head_rdata;
-						--when 6 =>
-						--dma_step <= head_rdata;
 						when others =>
 						null;
 					end case; 
@@ -414,10 +360,8 @@ begin
 			if ce_d1 = '1' then
 				if head_ena_d1 = '1' then	
 					if byte_cnt_d1(1 downto 0) = "00" then
---						head_rdata_buf <= X"0000" & head_rdata;
 						head_rdata_buf <= head_rdata & X"0000";
 					else
---						head_rdata_buf <= head_rdata_buf(15 downto 0) & head_rdata;
 						head_rdata_buf <= head_rdata & head_rdata_buf(23 downto 8);
 					end if;
 				end if;
@@ -427,8 +371,6 @@ begin
 
 	------------------------------------------------------------------------------
 	
---	buff_rden <= buff_ena and (not nibble_cnt(0)) and ce;
---	buff_rden <= buff_ena and ce when (byte_cnt(1 downto 0) = "00") else '0';
 	buff_rden <= buff_ena and ce;
 	
 	p_buff_raddr : process(clk, reset)
@@ -456,28 +398,10 @@ begin
 	
 	------------------------------------------------------------------------------
 
---	byte_data <= head_rdata when head_ena = '1' else 
---				 buff_rdata when buff_ena = '1' else 
---				 (others => '0');	
---	dword_data_int <= buff_rdata_buf when buff_ena_d1 = '1' else
---			head_rdata_buf & head_rdata when head_ena_d1 = '1' else
---			(others=>'0');
 	dword_data_int <= buff_rdata_buf when buff_ena_d1 = '1' else
---			head_rdata_buf & head_rdata when head_ena_d1 = '1' else
 			head_rdata & head_rdata_buf when head_ena_d1 = '1' else
 			(others=>'0');
 
---	p_nibble_data_buf : process(clk, reset)
---	begin
---		if reset = '1' then
---			nibble_data_buf <= (others => '0');
---		elsif rising_edge(clk) then
---			if ce = '1' then
---				nibble_data_buf <= byte_data(7 downto 4);
---			end if;
---		end if;
---	end process;
------------------------------------------------------------------------------
 	ce <= not TxFIFO_almost_full;
 
 	TxFIFO_clr <= '1' when data_start = '1' else '0';
@@ -511,7 +435,6 @@ begin
 		
 -------------------------------------------------------------------------------------------------------
 
---	data_start_ext_wren <= buff_ena and (not buff_ena_d1);
 	data_start_ext_wren <= (not head_ena) and head_ena_d1;
 	ASYNCWRITE_data_start_ext	: ASYNCWRITE
 		port map(
@@ -524,9 +447,6 @@ begin
 			over		=> open,
 			flag		=> open
 			); 
---	data_start_ext <= '1' when buff_ena = '1' and buff_ena_d1 = '0' else '0';
-		
---	ce_ext <= not TxFIFO_empty;
 	ce_ext <= '1';
 	
 	p_byte_cnt_ext : process(txclk, reset)
@@ -575,7 +495,6 @@ begin
 				if TxFIFO_rdb_d1 = '1' then
 					byte_data_buf <= TxFIFO_dob;
 				else
---					byte_data_buf <= byte_data_buf(23 downto 0) & X"00";			
 					byte_data_buf <= X"00" & byte_data_buf(31 downto 8);
 				end if;
 			end if;
@@ -593,58 +512,13 @@ begin
 		end if;
 	end process; 
 
---	nibble_data <= localtime_reg(31 downto 28) when nibble_cnt = 29 and source_select = '0' else
---			       localtime_reg(27 downto 24) when nibble_cnt = 28 and source_select = '0' else
---			       localtime_reg(23 downto 20) when nibble_cnt = 31 and source_select = '0' else
---			       localtime_reg(19 downto 16) when nibble_cnt = 30 and source_select = '0' else
---			       localtime_reg(15 downto 12) when nibble_cnt = 33 and source_select = '0' else
---			       localtime_reg(11 downto 8)  when nibble_cnt = 32 and source_select = '0' else
---			       localtime_reg(7 downto 4)   when nibble_cnt = 35 and source_select = '0' else
---			       localtime_reg(3 downto 0)   when nibble_cnt = 34 and source_select = '0' else
---				   byte_data(3 downto 0)   when nibble_cnt(0) = '0' else nibble_data_buf;
-
 	byte_data <= localtime_reg(31 downto 24) when byte_cnt_ext_d1 = 14 and source_select = '0' else
 			       localtime_reg(23 downto 16) when byte_cnt_ext_d1 = 15 and source_select = '0' else
 			       localtime_reg(15 downto 8) when byte_cnt_ext_d1 = 16 and source_select = '0' else
 			       localtime_reg(7 downto 0)   when byte_cnt_ext_d1 = 17 and source_select = '0' else
-				   --TxFIFO_dob(31 downto 24) when byte_cnt_ext_d1(1 downto 0) = "00" else
-				   --byte_data_buf(23 downto 16);
 				   TxFIFO_dob(7 downto 0) when byte_cnt_ext_d1(1 downto 0) = "00" else
 				   byte_data_buf(15 downto 8);
 					   
---	nibble_data <= byte_data(3 downto 0)   when nibble_cnt(0) = '0' else nibble_data_buf;
-	
-	------------------------------------------------------------------------------
-	
---	u_crc_rom : CRCRom
---	port map(
---		addr => crcrom_addr,
---		dout => crcrom_dout
---		);
---	
---	crcrom_addr <= crc_reg(31 downto 28);
---	
---	crc_din <= (others => '0') when data_ena = '0' else
---			   not (nibble_data(0) & nibble_data(1) & nibble_data(2) & nibble_data(3)) when nibble_cnt < 8 else
---			   nibble_data(0) & nibble_data(1) & nibble_data(2) & nibble_data(3);
---	
---	p_calc_crc : process(clk, reset)
---	begin
---		if reset = '1' then
---			crc_reg <= (others => '0');
---		elsif rising_edge(clk) then
---			if ce = '1' then
---				if data_start = '1' then
---					crc_reg <= (others => '0');
---				elsif data_ena_d1 = '1' then
---					crc_reg <= (crc_reg(27 downto 0) & crc_din) xor crcrom_dout;
---				else
---					crc_reg <= (crc_reg(27 downto 0) & crc_din);
---				end if;
---			end if;
---		end if;
---	end process;
-
 	u_crc_rom : CRC8_BlkRom
 	port map(  
 		clk => txclk,
@@ -680,84 +554,6 @@ begin
 		end if;
 	end process;
 	------------------------------------------------------------------------------
-	
---	u_nibble_data_dly : ShiftReg
---	generic map(
---		WIDTH => 4,
---		DEPTH => 16 -- 8
---		)
---	port map(
---		clk => clk,
---		ce => ce,
---		D => nibble_data,
---		Q => nibble_data_dly,
---		S => open
---		);
---
---	u_crc_reg_dly : ShiftReg
---	generic map(
---		WIDTH => 4,
---		DEPTH => 8 -- 8
---		)
---	port map(
---		clk => clk,
---		ce => ce,
---		D => crc_reg(31 downto 28),
---		Q => crc_reg_dly(3 downto 0),
---		S => open
---		);
---		
---	u_data_ena_d1 : ShiftReg
---	generic map(
---		WIDTH => 1,
---		DEPTH => 8 -- 8
---		)
---	port map(
---		clk => clk,
---		ce => ce,
---		D => v0,
---		Q => v1,
---		S => open
---		);
---	
---	u_data_ena_d2 : ShiftReg
---	generic map(
---		WIDTH => 1,
---		DEPTH => 8 --8 
---		)
---	port map(
---		clk => clk,
---		ce => ce,
---		D => v1,
---		Q => v2,
---		S => open
---		);
---
---	u_data_ena_d3 : ShiftReg
---	generic map(
---		WIDTH => 1,
---		DEPTH => 8 --8 
---		)
---	port map(
---		clk => clk,
---		ce => ce,
---		D => v2,
---		Q => v3,
---		S => open
---		);
---		
---	v0(0) <= data_ena;
---	data_ena_d1 <= v1(0);
---	data_ena_d2 <= v2(0); 
---	data_ena_d3 <= v3(0);	
---	
---	txd_int <= "0101" when data_ena = '1' and nibble_cnt < 15 else
---	           "1101" when data_ena = '1' and nibble_cnt = 15 else
---			   -- 	   
---			   nibble_data_dly when data_ena_d2 = '1' else
---			   not(crc_reg_dly(0) & crc_reg_dly(1) & crc_reg_dly(2) & crc_reg_dly(3)); 
---	
---	txen_int <= data_ena or data_ena_d3;
 	
 	u_nibble_data_dly : ShiftReg
 	generic map(
@@ -850,102 +646,6 @@ begin
 	
 	txen_buf <= data_ena_ext or data_ena_ext_d12;
 	------------------------------------------------------------------------------
-
---	u_dout_sync : fifo_async
---	generic map(
---		depth => 4,
---		awidth => 2,
---		dwidth => 5,
---		ram_type => "DIS_RAM"
---		)
---	port map(
---		reset => reset,
---		clr => '0',
---		clka => clk,
---		wea => ce,
---		dia => d_int,
---		clkb => txclk,
---		rdb => '1',
---		dob => d_ext,
---		empty => open,
---		full => full,
---		dn => open
---		);
-
---	u_dout_sync : fifo_async
---	generic map(
---		depth => 16,
---		awidth => 4,
---		dwidth => 5,
---		ram_type => "DIS_RAM"
---		)
---	port map(
---		reset => reset,
---		clr => '0',
---		clka => clk,
---		wea => ce,
---		dia => d_int,
---		clkb => txclk,
---		rdb => s_N_Empty_TxClk,
---		dob => d_ext,
---		empty => open,
---		full => full,
---		dn => m4_TxFIFO_DN
---		);
---	
---	u_dout_sync : fifo_async
---	generic map(
---		depth => 16,
---		awidth => 4,
---		dwidth => 9,
---		ram_type => "DIS_RAM"
---		)
---	port map(
---		reset => reset,
---		clr => '0',
---		clka => clk,
---		wea => ce,
---		dia => d_int,
---		clkb => txclk,
---		rdb => s_N_Empty_TxClk,
---		dob => d_ext,
---		empty => open,
---		full => full,
---		dn => m4_TxFIFO_DN
---		);
-	
---	NEmpty : process( reset, clk )
---	begin
---		if ( reset = '1' ) then	
---			s_N_Empty	<= '0';
---		elsif ( rising_edge( clk ) ) then
---			if ( m4_TxFIFO_DN > "0111" ) then 
---				s_N_Empty	<= '1';	
-----			else
-----				s_N_Empty	<= '0';
---			end if;			
---		end if;		
---	end process;
-	
---	NEmpty_TxClk : process( reset, txclk )
---	begin
---		if ( reset = '1' ) then
---			s_N_Empty_TxClk		<= '0';
---			s_N_Empty_TxClk_D1	<= '0';
---		elsif ( rising_edge( txclk ) ) then
---			s_N_Empty_TxClk		<= s_N_Empty;
---			s_N_Empty_TxClk_D1	<= s_N_Empty_TxClk;
---		end if;		
---	end process;
-	
---	d_int <= txen_int & txd_int;
---	txen_buf <= d_ext(4) and s_N_Empty_TxClk_D1;
---	txd_buf <= d_ext(3 downto 0) and ( s_N_Empty_TxClk_D1 & s_N_Empty_TxClk_D1 & s_N_Empty_TxClk_D1 & s_N_Empty_TxClk_D1 );	
---	ce <= not full;
-	
---	d_int <= txen_int & txd_int;
---	txen_buf <= d_ext(8) and s_N_Empty_TxClk_D1;
---	txd_buf <= d_ext(7 downto 0) and ( s_N_Empty_TxClk_D1 & s_N_Empty_TxClk_D1 & s_N_Empty_TxClk_D1 & s_N_Empty_TxClk_D1 & s_N_Empty_TxClk_D1 & s_N_Empty_TxClk_D1 & s_N_Empty_TxClk_D1 & s_N_Empty_TxClk_D1);	
 	
 	p_mii_dout : process(reset, txclk)
 	begin						
@@ -957,10 +657,6 @@ begin
 			txd <= txd_buf;
 		end if;
 	end process;   
-	
-	--------------------------------------------------------------
-	---        IFG - Inter Frame Gap generation
-	----------------------------------------------------------------	
 	
 	p_ifg_count : process(txclk, reset)
 	begin				 
