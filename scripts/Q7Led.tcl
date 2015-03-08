@@ -123,6 +123,12 @@ connect_bd_net -net [get_bd_nets clk_wiz_0_clk_out1] [get_bd_pins zOutReg_0/zClk
 
 connect_bd_net -net [get_bd_nets xlconstant_0_dout] [get_bd_pins clk_wiz_0/reset] [get_bd_pins xlconstant_0/dout]
 connect_bd_net [get_bd_pins zProg2Bram_0/BRAM_PORTA_clk] [get_bd_pins armbus/bram_clk_a]
+connect_bd_net [get_bd_pins armbus/bram_addr_a] [get_bd_pins zProg2Bram_0/BRAM_PORTA_addr]
+connect_bd_net [get_bd_pins armbus/bram_wrdata_a] [get_bd_pins zProg2Bram_0/BRAM_PORTA_din]
+connect_bd_net [get_bd_pins armbus/bram_rddata_a] [get_bd_pins zProg2Bram_0/BRAM_PORTA_dout]
+connect_bd_net [get_bd_pins armbus/bram_en_a] [get_bd_pins zProg2Bram_0/BRAM_PORTA_en]
+connect_bd_net [get_bd_pins armbus/bram_rst_a] [get_bd_pins zProg2Bram_0/BRAM_PORTA_rst]
+connect_bd_net [get_bd_pins armbus/bram_we_a] [get_bd_pins zProg2Bram_0/BRAM_PORTA_we]
 
 save_bd_design
 
